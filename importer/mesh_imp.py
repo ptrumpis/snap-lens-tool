@@ -1,6 +1,6 @@
 import bpy
 import os.path
-from .mesh_parser import MeshParser
+from ..parser.mesh_parser import MeshParser
 
 class MeshImporter:
     def __init__(self, filename, options):

@@ -18,7 +18,7 @@ from bpy.types import Operator
 
 import os
 import traceback
-from .snapmesh import importer
+from .importer.mesh_imp import MeshImporter
 
 class ImportLensMesh(Operator, ImportHelper):
     """Import a Snapchat mesh."""
@@ -46,7 +46,7 @@ class ImportLensMesh(Operator, ImportHelper):
             filepaths = [self.filepath]
         for filepath in filepaths:
             try:
-                imp = importer.MeshImporter(filepath, self.as_keywords())
+                imp = MeshImporter(filepath, self.as_keywords())
                 imp.do_import()
             except NotImplementedError as e:
                 self.report({"ERROR"}, f"Failed to load {filepath}")

@@ -10,37 +10,44 @@ class Type(Enum):
     FLOAT32 = 5
     FLOAT16 = 6
 
+type_to_symbol = {
+    Type.INT8: "b",
+    Type.UINT8: "B",
+    Type.INT16: "h",
+    Type.UINT16: "H",
+    Type.FLOAT32: "f",
+    Type.FLOAT16: "f2"
+}
+
+class Mesh:
+    def __init__(self):
+        self.vertices = None
+        self.indices = None
+
 class MeshParser(ResourceParser):
     def parse(self):
         json = super().parse()
 
         attributes = list(json["vertexlayout"]["attributes"].values())
         attributes.sort(key=lambda attr: attr["index"])
+        vert_dtype = []
+        for attr in attributes:
+            name = attr["semantic"]
+            comp_type = Type(attr["type"])
+            comp_count = attr["componentCount"]
+            type_symbol = type_to_symbol[comp_type]
+            vert_dtype.append((name, (type_symbol, comp_count)))
 
-        vertices = {attr["semantic"]: [] for attr in attributes}
         reader = BinaryReader(json["vertices"])
-        while not reader.finished():
-            for attr in attributes:
-                if Type(attr["type"]) == Type.INT8:
-                    vec = tuple(reader.readInt8() for _ in range(attr["componentCount"]))
-                elif Type(attr["type"]) == Type.UINT8:
-                    vec = tuple(reader.readUInt8() for _ in range(attr["componentCount"]))
-                elif Type(attr["type"]) == Type.INT16:
-                    vec = tuple(reader.readInt16() for _ in range(attr["componentCount"]))
-                elif Type(attr["type"]) == Type.UINT16:
-                    vec = tuple(reader.readUInt16() for _ in range(attr["componentCount"]))
-                elif Type(attr["type"]) == Type.FLOAT32:
-                    vec = tuple(reader.readFloat() for _ in range(attr["componentCount"]))
-                elif Type(attr["type"]) == Type.FLOAT16:
-                    vec = tuple(reader.readFloat16() for _ in range(attr["componentCount"]))
-                else:
-                    raise NotImplementedError()
-                vertices[attr["semantic"]].append(vec)
+        parsed_verts = reader.read(vert_dtype, -1)
+        mesh = Mesh()
+        mesh.vertices = {}
+        for i, attr in zip(range(len(attributes)), attributes):
+            mesh.vertices[attr["semantic"]] = [vert[i] for vert in parsed_verts]
 
-        indices = []
+        face_dtype = [("face", ("H", 3))]
         reader = BinaryReader(json["indices"])
-        while not reader.finished():
-            face = reader.read("H", 3)
-            indices.append(face)
+        parsed_faces = reader.read(face_dtype, -1)
+        mesh.indices = [face[0] for face in parsed_faces]
 
-        return vertices, indices
+        return mesh

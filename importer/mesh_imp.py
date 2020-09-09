@@ -12,18 +12,13 @@ class MeshImporter:
 
     def _import_mesh(self):
         parser = MeshParser(self.filename)
-        vertices, faces = parser.parse()
+        mesh = parser.parse()
         name = os.path.splitext(os.path.basename(self.filename))[0]
         new_mesh = bpy.data.meshes.new(name)
-        new_mesh.from_pydata(vertices["position"], [], faces)
+        new_mesh.from_pydata(mesh.vertices["position"], [], mesh.indices)
         new_mesh.update()
-        if "normal" in vertices:
-            new_mesh.normals_split_custom_set_from_vertices(vertices["normal"])
+        if "normal" in mesh.vertices:
+            new_mesh.normals_split_custom_set_from_vertices(mesh.vertices["normal"])
         new_object = bpy.data.objects.new(name, new_mesh)
         bpy.context.collection.objects.link(new_object)
 
-    def _import_scene(self):
-        raise NotImplementedError()
-
-    def _import_lns(self):
-        raise NotImplementedError()

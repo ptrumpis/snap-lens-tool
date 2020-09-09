@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-from snapmesh.resource_parser import ResourceParser
+from ..parser.resource_parser import ResourceParser
 import json
 import numpy as np
 

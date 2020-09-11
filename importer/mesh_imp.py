@@ -16,6 +16,13 @@ class MeshImporter:
         if "normal" in mesh.vertices:
             bpy_mesh.use_auto_smooth = True
             bpy_mesh.normals_split_custom_set_from_vertices(mesh.vertices["normal"])
+        if "texture0" in mesh.vertices:
+            uvlayer = bpy_mesh.uv_layers.new()
+            bpy_mesh.uv_layers.active = uvlayer
+            for face in bpy_mesh.polygons:
+                for vert_idx, loop_idx in zip(face.vertices, face.loop_indices):
+                    uvlayer.data[loop_idx].uv = mesh.vertices["texture0"][vert_idx]
+            bpy_mesh.calc_tangents(uvmap=uvlayer.name)
         bpy_mesh.update()
         return bpy_mesh
 

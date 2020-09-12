@@ -41,6 +41,7 @@ import os
 import traceback
 from .importer.mesh_imp import MeshImporter
 from .importer.lns_imp import LnsImporter
+from .importer.base_imp import BaseImporter
 
 class ImportLensMesh(Operator, ImportHelper):
     """Import a Snapchat mesh."""
@@ -54,15 +55,22 @@ class ImportLensMesh(Operator, ImportHelper):
         options={'HIDDEN'}
     )
 
-    batch: BoolProperty(
+    opt_batch: BoolProperty(
         name="Batch import",
         description="Imports the whole directory",
         default=False,
     )
 
+    opt_materials: BoolProperty(
+        name="Import materials",
+        description="Attempts to reconstruct materials (experimental)",
+        default=False,
+    )
+
     def execute(self, context):
-        if self.filepath.endswith(".mesh"):
-            if self.batch:
+        ext = os.path.splitext(self.filepath)[1]
+        if ext == ".mesh":
+            if self.opt_batch:
                 dirname = os.path.dirname(self.filepath)
                 filepaths = [os.path.join(dirname, file) for file in os.listdir(dirname) if file.endswith(".mesh")]
             else:
@@ -73,10 +81,10 @@ class ImportLensMesh(Operator, ImportHelper):
                     imp.do_import()
                 except Exception as e:
                     self.report({"ERROR"}, f"Failed to load {filepath}")
-        elif self.filepath.endswith(".lns"):
+        elif ext == ".lns" or ext == "":
             imp = LnsImporter(self.filepath, self)
             imp.do_import()
-        elif self.filepath.endswith(".scn"):
+        elif ext == ".scn":
             raise NotImplementedError(".scn import not supported")
 
         return {'FINISHED'}

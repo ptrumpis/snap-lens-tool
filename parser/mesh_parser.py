@@ -38,7 +38,7 @@ class MeshParser(ResourceParser):
             type_symbol = type_to_symbol[comp_type]
             vert_dtype.append((name, (type_symbol, comp_count)))
 
-        reader = BinaryReader(json["vertices"])
+        reader = BinaryReader(json["vertices"].as_bytes())
         parsed_verts = reader.read(vert_dtype, -1)
         mesh = Mesh()
         mesh.vertices = {}
@@ -46,7 +46,7 @@ class MeshParser(ResourceParser):
             mesh.vertices[attr["semantic"]] = [vert[i] for vert in parsed_verts]
 
         face_dtype = [("face", ("H", 3))]
-        reader = BinaryReader(json["indices"])
+        reader = BinaryReader(json["indices"].as_bytes())
         parsed_faces = reader.read(face_dtype, -1)
         mesh.indices = [face[0] for face in parsed_faces]
 

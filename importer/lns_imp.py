@@ -1,24 +1,26 @@
-import os.path
-import bpy
-from tempfile import NamedTemporaryFile
-from bpy_extras.io_utils import axis_conversion
-from .mesh_imp import MeshImporter
-from ..parser.mesh_parser import MeshParser
+from .base_imp import BaseImporter
+from .scn_imp import ScnImporter
 from ..parser.lns_parser import LnsParser
-from ..parser.resource_parser import ResourceParser
 
-class LnsImporter(MeshImporter):
-    def __init__(self, filename, operator):
-        super().__init__(filename, operator)
+class LnsImporter(BaseImporter):
+    def __init__(self, filename, operator, data=None):
+        super().__init__(filename, operator, data)
 
     def do_import(self):
-        self._import_lns()
+        parser = LnsParser(self.filename)
+        files = parser.parse()
 
+        if "/scene.scn" in files:
+            scn_importer = ScnImporter(None, self.operator, data=files["/scene.scn"], files=files)
+            scn_importer.do_import()
+        else:
+            self.operator.report({"WARNING"}, "LNS archive does not contain a scene.scn")
+
+        '''
     def _import_lns(self):
         parser = LnsParser(self.filename)
         files = parser.parse()
-        if "/scene.scn" not in files:
-            raise NotImplementedError("LNS without scene.scn file not supported")
+        return files
 
         parser = ResourceParser(None, data=files["/scene.scn"])
         scene = parser.parse()
@@ -209,3 +211,4 @@ class LnsImporter(MeshImporter):
         if "children" in sceneobject:
             for child in sceneobject["children"].values():
                 self._create_sceneobjects(child, bpy_obj, assets)
+        '''

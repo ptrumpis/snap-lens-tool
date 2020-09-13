@@ -1,12 +1,18 @@
 import bpy
+from bpy_extras.io_utils import axis_conversion
+import mathutils
 from .base_imp import BaseImporter
 from ..parser.scn_parser import ScnParser, RenderComponent
+
+
 
 class ScnImporter(BaseImporter):
     def __init__(self, filename, operator, data=None, files=None):
         super().__init__(filename, operator, data)
         self.files = files
         self.scene = None
+        self.scale_matrix = mathutils.Matrix.Scale(self.operator.opt_scale, 4)
+        self.conversion_matrix = axis_conversion(from_forward="Z", from_up="Y", to_forward="-Y", to_up="Z").to_4x4()
 
     def do_import(self):
         parser = ScnParser(self.filename, self.data, self.files)
@@ -48,5 +54,7 @@ class ScnImporter(BaseImporter):
         bpy_obj.rotation_mode = "QUATERNION"
         bpy_obj.rotation_quaternion = [sceneobject.rotation[3], *sceneobject.rotation[:3]]
         bpy_obj.parent = parent_bpy_obj
+        if parent_bpy_obj is None:
+            bpy_obj.matrix_world = self.scale_matrix @ self.conversion_matrix @ bpy_obj.matrix_world
         for child in sceneobject.children:
             self._create_sceneobjects(child, bpy_obj)

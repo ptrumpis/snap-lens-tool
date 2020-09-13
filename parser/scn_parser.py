@@ -138,7 +138,7 @@ class ScnParser(ResourceParser):
             for component_json in sceneobject_json["components"].values():
                 uid = component_json["uid"]
                 name = component_json["name"]
-                if component_json["type"] == "Component.RenderMeshVisual":
+                if component_json["type"] in ["Component.RenderMeshVisual", "Component.MeshVisual"]:
                     mesh_uid = component_json["mesh"]["uid"]
                     mesh = self._get_asset(self.scene.meshes, mesh_uid)
                     component = RenderComponent(name, uid, mesh)

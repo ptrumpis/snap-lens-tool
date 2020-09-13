@@ -3,7 +3,7 @@ bl_info = {
     "author": "Connor Virostek",
     "blender": (2, 80, 0),
     "version": (1, 0, 0),
-    "location": "File > Import > Snapchat Mesh (.mesh)",
+    "location": "File > Import > Snapchat Mesh (.mesh/.scn/.lns)",
     "description": "Importer for Snapchat's mesh format used in Lenses.",
     "warning": "",
     "wiki_url": "",
@@ -34,13 +34,14 @@ if "bpy" in locals():
 
 import bpy
 from bpy_extras.io_utils import ImportHelper
-from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.props import StringProperty, FloatProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
 
 import os
 import traceback
 from .importer.mesh_imp import MeshImporter
 from .importer.lns_imp import LnsImporter
+from .importer.scn_imp import ScnImporter
 from .importer.base_imp import BaseImporter
 
 class ImportLensMesh(Operator, ImportHelper):
@@ -57,8 +58,14 @@ class ImportLensMesh(Operator, ImportHelper):
 
     opt_batch: BoolProperty(
         name="Batch import",
-        description="Imports the whole directory",
+        description="Imports all .mesh files in same directory",
         default=False,
+    )
+
+    opt_scale: FloatProperty(
+        name="Scale",
+        description="Scales meshes/scene",
+        default=0.1,
     )
 
     opt_materials: BoolProperty(
@@ -85,13 +92,14 @@ class ImportLensMesh(Operator, ImportHelper):
             imp = LnsImporter(self.filepath, self)
             imp.do_import()
         elif ext == ".scn":
-            raise NotImplementedError(".scn import not supported")
+            imp = ScnImporter(self.filepath, self)
+            imp.do_import()
 
         return {'FINISHED'}
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportLensMesh.bl_idname, text="Snapchat Mesh (.mesh)")
+    self.layout.operator(ImportLensMesh.bl_idname, text="Snapchat Mesh (.mesh/.scn/.lns)")
 
 
 def register():

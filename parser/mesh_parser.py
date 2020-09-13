@@ -28,15 +28,7 @@ class MeshParser(ResourceParser):
     def parse(self):
         json = super().parse()
 
-        attributes = list(json["vertexlayout"]["attributes"].values())
-        attributes.sort(key=lambda attr: attr["index"])
-        vert_dtype = []
-        for attr in attributes:
-            name = attr["semantic"]
-            comp_type = Type(attr["type"])
-            comp_count = attr["componentCount"]
-            type_symbol = type_to_symbol[comp_type]
-            vert_dtype.append((name, (type_symbol, comp_count)))
+        vert_dtype, attributes = MeshParser.build_dtype(json)
 
         reader = BinaryReader(json["vertices"].as_bytes())
         parsed_verts = reader.read(vert_dtype, -1)
@@ -51,3 +43,15 @@ class MeshParser(ResourceParser):
         mesh.indices = [face[0] for face in parsed_faces]
 
         return mesh
+
+    def build_dtype(json):
+        attributes = list(json["vertexlayout"]["attributes"].values())
+        attributes.sort(key=lambda attr: attr["index"])
+        vert_dtype = []
+        for attr in attributes:
+            name = attr["semantic"]
+            comp_type = Type(attr["type"])
+            comp_count = attr["componentCount"]
+            type_symbol = type_to_symbol[comp_type]
+            vert_dtype.append((name, (type_symbol, comp_count)))
+        return vert_dtype, attributes

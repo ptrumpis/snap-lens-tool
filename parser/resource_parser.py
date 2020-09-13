@@ -1,4 +1,5 @@
 from enum import Enum
+import numpy as np
 from .binary_reader import BinaryReader
 
 class Type(Enum):
@@ -24,8 +25,8 @@ class Type(Enum):
     VEC4B = 0x17
 
 class ArrayData:
-    def __init__(self, data, offset, size):
-        self.reader = BinaryReader(data)
+    def __init__(self, data, offset, size, endianness):
+        self.reader = BinaryReader(data, endianness)
         self.reader.seek(offset)
         self.size = size
 
@@ -38,6 +39,10 @@ class ArrayData:
             string_len = self.reader.readUInt32()
             strings.append(self.reader.readString(string_len))
         return strings
+
+    def as_dtype(self, dtype):
+        count = self.size // np.dtype(dtype).itemsize
+        return self.reader.read(dtype, count)
 
 class ResourceParser:
     def __init__(self, filename, data=None):
@@ -89,7 +94,7 @@ class ResourceParser:
                 cur_dict[label] = self.reader.readBool()
             elif tag == Type.BYTES:
                 offset = self.reader.readUInt32()
-                cur_dict[label] = ArrayData(byte_pool, offset, size)
+                cur_dict[label] = ArrayData(byte_pool, offset, size, self.reader.endianness)
             elif tag == Type.DOUBLE:
                 cur_dict[label] = self.reader.readDouble()
             elif tag == Type.FLOAT:

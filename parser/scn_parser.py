@@ -141,13 +141,14 @@ class ScnParser(ResourceParser):
                 if component_json["type"] in ["Component.RenderMeshVisual", "Component.MeshVisual"]:
                     mesh_uid = component_json["mesh"]["uid"]
                     mesh = self._get_asset(self.scene.meshes, mesh_uid)
-                    component = RenderComponent(name, uid, mesh)
-                    if self.parse_materials:
-                        for material_json in component_json["materials"].values():
-                            material_uid = material_json["material"]["uid"]
-                            material = self._get_asset(self.scene.materials, material_uid)
-                            component.materials.append(material)
-                    sceneobject.components.append(component)
+                    if mesh is not None:
+                        component = RenderComponent(name, uid, mesh)
+                        if self.parse_materials:
+                            for material_json in component_json["materials"].values():
+                                material_uid = material_json["material"]["uid"]
+                                material = self._get_asset(self.scene.materials, material_uid)
+                                component.materials.append(material)
+                        sceneobject.components.append(component)
 
         if "children" in sceneobject_json:
             for child_json in sceneobject_json["children"].values():

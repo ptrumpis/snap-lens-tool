@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import zstd
 from .binary_reader import BinaryReader
 from .exceptions import ParserException

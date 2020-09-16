@@ -15,13 +15,15 @@ class BinaryWriter:
         return b"".join(self.data)
 
     def write(self, np_value):
-        b = np_value.tobytes()
-        self.data.append(b)
-        self.size += len(b)
-        return len(b)
+        self.data.append(np_value.tobytes())
+        self.size += np_value.nbytes
+        return np_value.nbytes
 
     def write_uint32(self, value):
         return self.write(np.uint32(value))
+
+    def write_uint16(self, value):
+        return self.write(np.uint16(value))
 
     def write_bytes(self, value):
         self.data.append(value)

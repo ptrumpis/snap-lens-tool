@@ -43,10 +43,11 @@ from .importer.mesh_imp import MeshImporter
 from .importer.lns_imp import LnsImporter
 from .importer.scn_imp import ScnImporter
 from .importer.base_imp import BaseImporter
+from .exporter.mesh_exp import MeshExporter
 
-class ImportLensMesh(Operator, ImportHelper):
+class ImportSnapchatMesh(Operator, ImportHelper):
     """Import a Snapchat mesh."""
-    bl_idname = "import_mesh.snap_mesh"
+    bl_idname = "import_mesh.snapchat_mesh"
     bl_label = "Import Snapchat Mesh"
 
     filename_ext = ""
@@ -97,22 +98,57 @@ class ImportLensMesh(Operator, ImportHelper):
 
         return {'FINISHED'}
 
+class ExportSnapchatMesh(Operator, ImportHelper):
+    """Export a Snapchat mesh."""
+    bl_idname = "export_mesh.snapchat_mesh"
+    bl_label = "Export Snapchat Mesh"
+
+    filename_ext = ""
+
+    filter_glob: StringProperty(
+        default="*.mesh",
+        options={'HIDDEN'}
+    )
+
+    opt_scale: FloatProperty(
+        name="Scale",
+        description="Scales mesh",
+        default=1,
+    )
+
+    opt_export_selected: BoolProperty(
+        name="Export selected",
+        description="Exports the selected object",
+        default=False,
+    )
+
+    def execute(self, context):
+        exp = MeshExporter(self.filepath, self)
+        exp.do_export()
+
+        return {'FINISHED'}
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportLensMesh.bl_idname, text="Snapchat Mesh (.mesh/.scn/.lns)")
+    self.layout.operator(ImportSnapchatMesh.bl_idname, text="Snapchat Mesh (.mesh/.scn/.lns)")
 
+def menu_func_export(self, context):
+    self.layout.operator(ExportSnapchatMesh.bl_idname, text="Snapchat Mesh (.mesh)")
 
 def register():
-    bpy.utils.register_class(ImportLensMesh)
+    bpy.utils.register_class(ImportSnapchatMesh)
+    bpy.utils.register_class(ExportSnapchatMesh)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.utils.unregister_class(ImportLensMesh)
+    bpy.utils.unregister_class(ImportSnapchatMesh)
+    bpy.utils.unregister_class(ExportSnapchatMesh)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 
 if __name__ == "__main__":
     register()
 
-    bpy.ops.import_mesh.snap_mesh('INVOKE_DEFAULT')
+    bpy.ops.import_mesh.snapchat_mesh('INVOKE_DEFAULT')

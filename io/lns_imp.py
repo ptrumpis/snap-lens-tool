@@ -1,6 +1,6 @@
 from .base_imp import BaseImporter
 from .scn_imp import ScnImporter
-from ..parser.lns_parser import LnsParser
+from ..common.parser.lns_parser import LnsParser
 
 class LnsImporter(BaseImporter):
     def __init__(self, filename, operator, data=None):

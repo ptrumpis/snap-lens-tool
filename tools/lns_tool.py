@@ -8,8 +8,8 @@ import zstd
 package_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, package_path)
 
-from parser.lns_parser import LnsParser
-from util.binary_writer import BinaryWriter
+from common.parser.lns_parser import LnsParser
+from common.util.binary_writer import BinaryWriter
 
 def extract(filename):
     parser = LnsParser(filename)

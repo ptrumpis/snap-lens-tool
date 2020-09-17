@@ -39,11 +39,10 @@ from bpy.types import Operator
 
 import os
 import traceback
-from .importer.mesh_imp import MeshImporter
-from .importer.lns_imp import LnsImporter
-from .importer.scn_imp import ScnImporter
-from .importer.base_imp import BaseImporter
-from .exporter.mesh_exp import MeshExporter
+from .io.mesh_imp import MeshImporter
+from .io.lns_imp import LnsImporter
+from .io.scn_imp import ScnImporter
+from .io.mesh_exp import MeshExporter
 
 class ImportSnapchatMesh(Operator, ImportHelper):
     """Import a Snapchat mesh."""

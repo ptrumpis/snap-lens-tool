@@ -1,7 +1,7 @@
 import bpy
 import os.path
 from .base_imp import BaseImporter
-from ..parser.mesh_parser import MeshParser
+from ..common.parser.mesh_parser import MeshParser
 
 class MeshImporter(BaseImporter):
     def __init__(self, filename, operator, data=None):

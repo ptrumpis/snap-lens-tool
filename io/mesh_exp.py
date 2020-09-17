@@ -4,8 +4,8 @@ import numpy as np
 import mathutils
 import bmesh
 from bpy_extras.io_utils import axis_conversion
-from ..serializer.resource_serializer import ResourceSerializer
-from ..types.enums import AttrType
+from ..common.serializer.resource_serializer import ResourceSerializer
+from ..common.types.enums import AttrType
 
 class MeshExporter:
     def __init__(self, filename, operator):

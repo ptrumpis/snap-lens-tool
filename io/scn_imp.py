@@ -1,7 +1,7 @@
 import bpy
 import mathutils
 from .base_imp import BaseImporter
-from ..parser.scn_parser import ScnParser, RenderComponent
+from ..common.parser.scn_parser import ScnParser, RenderComponent
 
 class ScnImporter(BaseImporter):
     def __init__(self, filename, operator, data=None, files=None):

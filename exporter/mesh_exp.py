@@ -2,6 +2,7 @@ import bpy
 import bpy_types
 import numpy as np
 import mathutils
+import bmesh
 from bpy_extras.io_utils import axis_conversion
 from ..serializer.resource_serializer import ResourceSerializer
 from ..parser.mesh_parser import Type
@@ -36,6 +37,14 @@ class MeshExporter:
         bpy_mesh = bpy_objs[0].data.copy()
         bpy_mesh.transform(self.scale_matrix @ self.conversion_matrix @ bpy_obj.matrix_world)
 
+        # triangulate mesh
+        bm_mesh = bmesh.new()
+        bm_mesh.from_mesh(bpy_mesh)
+        bmesh.ops.triangulate(bm_mesh, faces=bm_mesh.faces[:], quad_method='BEAUTY', ngon_method='BEAUTY')
+        bm_mesh.to_mesh(bpy_mesh)
+        bm_mesh.free()
+
+        # build up data for each vertex
         vert_pos = [np.array(vert.co) for vert in bpy_mesh.vertices]
         vert_norm = [np.array(vert.normal) for vert in bpy_mesh.vertices]
         if bpy_mesh.uv_layers.active is not None:
@@ -43,7 +52,6 @@ class MeshExporter:
         if bpy_mesh.vertex_colors.active is not None:
             vert_col = [[] for _ in bpy_mesh.vertices]
 
-        # build up data for each vertex
         for face in bpy_mesh.polygons:
             if face.loop_total != 3:
                 self.operator.report({"ERROR"}, "Triangulate mesh before exporting.")

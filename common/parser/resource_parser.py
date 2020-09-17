@@ -1,27 +1,67 @@
 from enum import Enum
 import numpy as np
-from ..util.binary_reader import BinaryReader
+from ..util.binary_reader import BinaryReader, BinaryReaderError
 from ..types.enums import FieldType
 
+class JsonResourceBuilder:
+    def __init__(self):
+        self.root = {}
+        self.stack = [self.root]
+        self.arrays = []
+        self.parent = self.root
+
+    def start_block(self, key=None):
+        block = {}
+        if key is None:
+            self.parent[len(self.parent)] = block
+        else:
+            self.parent[key] = block
+        self.stack.append(self.parent)
+        self.parent = block
+
+    def finish_block(self):
+        self.parent = self.stack.pop()
+
+    def add_value(self, key, value, *args):
+        self.parent[key] = value
+
+    def add_array(self, key, offset, size):
+        arr_data = ArrayData()
+        self.parent[key] = arr_data
+        self.arrays.append((offset, size, arr_data))
+
+    def infer_arrays(self, data, header_size):
+        self.arrays.sort(key=lambda x: x[0])
+        for (offset, size, arr), i in zip(self.arrays, range(len(self.arrays))):
+            if i == len(self.arrays) - 1:
+                true_size = len(data) - header_size - offset
+            else:
+                true_size = self.arrays[i+1][0] - offset
+
+            arr.data = data[header_size+offset:header_size+offset+true_size]
+
+    def finished(self):
+        return len(self.stack) == 0
+
 class ArrayData:
-    def __init__(self, data, offset, size, endianness):
-        self.reader = BinaryReader(data, endianness)
-        self.reader.seek(offset)
-        self.size = size
+    def __init__(self, data=None):
+        self.data = data
 
     def as_bytes(self):
-        return self.reader.read_bytes(self.size)
+        return self.data
 
     def as_strings(self):
+        reader = BinaryReader(self.data)
         strings = []
-        for i in range(self.size):
-            string_len = self.reader.read_uint32()
-            strings.append(self.reader.read_string(string_len))
+        while not reader.finished():
+            string_len = reader.read_uint32()
+            strings.append(reader.read_string(string_len))
         return strings
 
     def as_dtype(self, dtype):
-        count = self.size // np.dtype(dtype).itemsize
-        return self.reader.read(dtype, count)
+        reader = BinaryReader(self.data)
+        count = len(self.data) // np.dtype(dtype).itemsize
+        return reader.read(dtype, count)
 
 class ResourceParser:
     def __init__(self, filename, data=None):
@@ -39,17 +79,11 @@ class ResourceParser:
             strings.append(self.reader.read_string(str_len))
         return strings
 
-    def _parse_values(self):
+    def _parse_values(self, builder):
         if self.version == 2:
             strings = self._parse_strings()
 
-        root_dict = {}
-        dict_stack = [root_dict]
-        byte_pool = self.reader.data[self.header_size:]
-
-        while len(dict_stack) > 0:
-            cur_dict = dict_stack[-1]
-
+        while not builder.finished():
             tag = FieldType(self.reader.read_uint16())
             if tag != FieldType.END:
                 if self.version == 1:
@@ -61,58 +95,69 @@ class ResourceParser:
                 size = self.reader.read_uint32()
 
             if tag == FieldType.BEGIN:
-                new_dict = {}
-                dict_stack.append(new_dict)
-                if label is None:
-                    cur_dict[len(cur_dict)] = new_dict
-                else:
-                    cur_dict[label] = new_dict
+                builder.start_block(label)
             elif tag == FieldType.END:
-                dict_stack.pop()
+                builder.finish_block()
             elif tag == FieldType.BOOL:
-                cur_dict[label] = self.reader.read_bool8()
+                value = self.reader.read_bool8()
+                builder.add_value(label, value, "bool8")
             elif tag == FieldType.BYTES:
                 offset = self.reader.read_uint32()
-                cur_dict[label] = ArrayData(byte_pool, offset, size, self.reader.endianness)
+                builder.add_array(label, offset, size)
             elif tag == FieldType.DOUBLE:
-                cur_dict[label] = self.reader.read_float64()
+                value = self.reader.read_float64()
+                builder.add_value(label, value, "float64")
             elif tag == FieldType.FLOAT:
-                cur_dict[label] = self.reader.read_float32()
+                value = self.reader.read_float32()
+                builder.add_value(label, value, "float32")
             elif tag == FieldType.INT32:
-                cur_dict[label] = self.reader.read_int32()
+                value = self.reader.read_int32()
+                builder.add_value(label, value, "int32")
             elif tag == FieldType.INT64:
-                cur_dict[label] = self.reader.read_int64()
+                value = self.reader.read_int64()
+                builder.add_value(label, value, "int64")
             elif tag == FieldType.MAT2:
-                cur_dict[label] = self.reader.read_mat2()
+                value = self.reader.read_mat2()
+                builder.add_value(label, value, "mat2f", "float32")
             elif tag == FieldType.MAT3:
-                cur_dict[label] = self.reader.read_mat3()
+                value = self.reader.read_mat3()
+                builder.add_value(label, value, "mat3f", "float32")
             elif tag == FieldType.MAT4:
-                cur_dict[label] = self.reader.read_mat4()
+                value = self.reader.read_mat4()
+                builder.add_value(label, value, "mat4f", "float32")
             elif tag == FieldType.QUAT:
-                cur_dict[label] = self.reader.read_quat()
+                value = self.reader.read_quat()
+                builder.add_value(label, value, "quatf", "float32")
             elif tag == FieldType.STRING:
                 string_index = self.reader.read_uint32()
-                string = strings[string_index-1]
-                cur_dict[label] = string
+                value = strings[string_index-1]
+                builder.add_value(label, value, "string")
             elif tag == FieldType.STRINGV1:
                 string_len = self.reader.read_uint32()
-                string = self.reader.read_string(string_len)
-                cur_dict[label] = string
+                value = self.reader.read_string(string_len)
+                builder.add_value(label, value, "string")
             elif tag == FieldType.UINT32:
-                cur_dict[label] = self.reader.read_uint32()
+                value = self.reader.read_uint32()
+                builder.add_value(label, value, "uint32")
             elif tag == FieldType.UINT64:
-                cur_dict[label] = self.reader.read_uint64()
+                value = self.reader.read_uint64()
+                builder.add_value(label, value, "uint64")
             elif tag == FieldType.VEC2F:
-                cur_dict[label] = self.reader.read_vec2f()
+                value = self.reader.read_vec2f()
+                builder.add_value(label, value, "vec2f", "float32")
             elif tag == FieldType.VEC3F:
-                cur_dict[label] = self.reader.read_vec3f()
+                value = self.reader.read_vec3f()
+                builder.add_value(label, value, "vec3f", "float32")
             elif tag == FieldType.VEC4F:
-                cur_dict[label] = self.reader.read_vec4f()
+                value = self.reader.read_vec4f()
+                builder.add_value(label, value, "vec4f", "float32")
             elif tag == FieldType.VEC4B:
-                cur_dict[label] = self.reader.read_vec4b()
-        return root_dict
+                value = self.reader.read_vec4b()
+                builder.add_value(label, value, "vec4b", "int8")
+        builder.infer_arrays(self.reader.data, self.header_size)
+        return builder.root
 
-    def parse(self):
+    def parse(self, builder_cls=JsonResourceBuilder):
         if self.reader is None:
             with open(self.filename, "rb") as f:
                 data = f.read()
@@ -122,6 +167,6 @@ class ResourceParser:
             raise NotImplementedError(f"Resource version {self.version} not supported")
         self.header_size = self.reader.read_uint32()
         self.reader.seek(0x48)
-        self.json = self._parse_values()
+        self.json = self._parse_values(builder_cls())
         return self.json
 

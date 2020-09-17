@@ -1,6 +1,8 @@
 import bpy
 import bpy_types
 import numpy as np
+import mathutils
+from bpy_extras.io_utils import axis_conversion
 from ..serializer.resource_serializer import ResourceSerializer
 from ..parser.mesh_parser import Type
 
@@ -8,27 +10,31 @@ class MeshExporter:
     def __init__(self, filename, operator):
         self.filename = filename
         self.operator = operator
+        self.scale_matrix = mathutils.Matrix.Scale(self.operator.opt_scale, 4)
+        self.conversion_matrix = axis_conversion(from_forward="-Y", from_up="Z", to_forward="Z", to_up="Y").to_4x4()
 
     def do_export(self):
         if self.operator.opt_export_selected:
             bpy_objs = bpy.context.view_layer.objects.selected
         else:
             bpy_objs = bpy.context.view_layer.objects
-        bpy_meshes = [bpy_obj.data for bpy_obj in bpy_objs if isinstance(bpy_obj.data, bpy_types.Mesh)]
+        bpy_objs = [bpy_obj for bpy_obj in bpy_objs if isinstance(bpy_obj.data, bpy_types.Mesh)]
 
-        if len(bpy_meshes) == 0:
+        if len(bpy_objs) == 0:
             if self.operator.opt_export_selected:
                 self.operator.report({"ERROR"}, "No selected mesh.")
             else:
                 self.operator.report({"ERROR"}, "No mesh to export.")
             return
-        elif len(bpy_meshes) > 1:
+        elif len(bpy_objs) > 1:
             if self.operator.opt_export_selected:
                 self.operator.report({"ERROR"}, "Join to one mesh before exporting.")
             else:
                 self.operator.report({"ERROR"}, "Join to one mesh or check 'Export selected' before exporting.")
             return
-        bpy_mesh = bpy_meshes[0]
+        bpy_obj = bpy_objs[0]
+        bpy_mesh = bpy_objs[0].data.copy()
+        bpy_mesh.transform(self.scale_matrix @ self.conversion_matrix @ bpy_obj.matrix_world)
 
         vert_pos = [np.array(vert.co) for vert in bpy_mesh.vertices]
         vert_norm = [np.array(vert.normal) for vert in bpy_mesh.vertices]
@@ -181,3 +187,6 @@ class MeshExporter:
 
         serializer.finalize()
         serializer.to_file(self.filename)
+
+        bpy.data.meshes.remove(bpy_mesh)
+

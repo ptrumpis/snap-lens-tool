@@ -88,6 +88,7 @@ class ImportSnapchatMesh(Operator, ImportHelper):
                     imp = MeshImporter(filepath, self)
                     imp.do_import()
                 except Exception as e:
+                    self.report({"ERROR"}, traceback.format_exc())
                     self.report({"ERROR"}, f"Failed to load {filepath}")
         elif ext == ".lns" or ext == "":
             imp = LnsImporter(self.filepath, self)
@@ -113,7 +114,7 @@ class ExportSnapchatMesh(Operator, ImportHelper):
     opt_scale: FloatProperty(
         name="Scale",
         description="Scales mesh",
-        default=1,
+        default=10,
     )
 
     opt_export_selected: BoolProperty(

@@ -12,5 +12,6 @@ class MeshImporter(BaseImporter):
         mesh = parser.parse()
         name = os.path.splitext(os.path.basename(self.filename))[0]
         bpy_mesh = self.create_mesh(mesh, name)
-        bpy_object = self.create_object(bpy_mesh, name)
+        bpy_obj = self.create_object(bpy_mesh, name)
+        bpy_obj.matrix_world = self.scale_matrix @ self.conversion_matrix @ bpy_obj.matrix_world
 

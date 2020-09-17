@@ -1,13 +1,16 @@
 import bpy
+from bpy_extras.io_utils import axis_conversion
 import os
 from tempfile import NamedTemporaryFile
-from mathutils import Color
+import mathutils
 
 class BaseImporter:
     def __init__(self, filename, operator, data=None):
         self.filename = filename
         self.operator = operator
         self.data = data
+        self.scale_matrix = mathutils.Matrix.Scale(self.operator.opt_scale, 4)
+        self.conversion_matrix = axis_conversion(from_forward="Z", from_up="Y", to_forward="-Y", to_up="Z").to_4x4()
 
     def do_import(self):
         raise NotImplementedError("Function stub")

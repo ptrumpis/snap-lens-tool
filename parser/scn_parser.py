@@ -4,23 +4,6 @@ from ..util.binary_reader import BinaryReader
 from .resource_parser import ResourceParser
 from .mesh_parser import MeshParser
 
-class Type(Enum):
-    INT8 = 1
-    UINT8 = 2
-    INT16 = 3
-    UINT16 = 4
-    FLOAT32 = 5
-    FLOAT16 = 6
-
-type_to_symbol = {
-    Type.INT8: "b",
-    Type.UINT8: "B",
-    Type.INT16: "h",
-    Type.UINT16: "H",
-    Type.FLOAT32: "f",
-    Type.FLOAT16: "f2"
-}
-
 class Asset:
     def __init__(self, name, uid):
         self.full_name = name

@@ -5,7 +5,7 @@ import mathutils
 import bmesh
 from bpy_extras.io_utils import axis_conversion
 from ..serializer.resource_serializer import ResourceSerializer
-from ..parser.mesh_parser import Type
+from ..types.enums import AttrType
 
 class MeshExporter:
     def __init__(self, filename, operator):
@@ -103,7 +103,7 @@ class MeshExporter:
         serializer.begin()
         serializer.write_string("semantic", "position")
         serializer.write_uint32("index", index)
-        serializer.write_int32("type", Type.FLOAT32.value)
+        serializer.write_int32("type", AttrType.FLOAT32.value)
         serializer.write_uint32("componentCount", 3)
         serializer.write_bool("normalized", False)
         serializer.write_uint32("offset", offset)
@@ -114,7 +114,7 @@ class MeshExporter:
         serializer.begin()
         serializer.write_string("semantic", "normal")
         serializer.write_uint32("index", index)
-        serializer.write_int32("type", Type.FLOAT32.value)
+        serializer.write_int32("type", AttrType.FLOAT32.value)
         serializer.write_uint32("componentCount", 3)
         serializer.write_bool("normalized", False)
         serializer.write_uint32("offset", offset)
@@ -126,7 +126,7 @@ class MeshExporter:
         serializer.begin()
         serializer.write_string("semantic", "tangent")
         serializer.write_uint32("index", index)
-        serializer.write_int32("type", Type.FLOAT32.value)
+        serializer.write_int32("type", AttrType.FLOAT32.value)
         serializer.write_uint32("componentCount", 4)
         serializer.write_bool("normalized", False)
         serializer.write_uint32("offset", offset)
@@ -139,7 +139,7 @@ class MeshExporter:
             serializer.begin()
             serializer.write_string("semantic", "texture0")
             serializer.write_uint32("index", index)
-            serializer.write_int32("type", Type.FLOAT32.value)
+            serializer.write_int32("type", AttrType.FLOAT32.value)
             serializer.write_uint32("componentCount", 2)
             serializer.write_bool("normalized", False)
             serializer.write_uint32("offset", offset)
@@ -151,7 +151,7 @@ class MeshExporter:
             serializer.begin()
             serializer.write_string("semantic", "color")
             serializer.write_uint32("index", index)
-            serializer.write_int32("type", Type.UINT8.value)
+            serializer.write_int32("type", AttrType.UINT8.value)
             serializer.write_uint32("componentCount", 4)
             serializer.write_bool("normalized", False)
             serializer.write_uint32("offset", offset)

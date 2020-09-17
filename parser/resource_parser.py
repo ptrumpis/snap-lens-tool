@@ -1,28 +1,7 @@
 from enum import Enum
 import numpy as np
 from ..util.binary_reader import BinaryReader
-
-class Type(Enum):
-    BEGIN = 0x0e
-    END = 0x00
-    BOOL = 0x01
-    BYTES = 0x0f
-    DOUBLE = 0x05
-    FLOAT = 0x03
-    INT32 = 0x02
-    INT64 = 0x10
-    MAT2 = 0x16
-    MAT3 = 0x0a
-    MAT4 = 0x0b
-    QUAT = 0x0c
-    STRING = 0x18
-    STRINGV1 = 0x04
-    UINT32 = 0x06
-    UINT64 = 0x11
-    VEC2F = 0x07
-    VEC3F = 0x08
-    VEC4F = 0x09
-    VEC4B = 0x17
+from ..types.enums import FieldType
 
 class ArrayData:
     def __init__(self, data, offset, size, endianness):
@@ -71,8 +50,8 @@ class ResourceParser:
         while len(dict_stack) > 0:
             cur_dict = dict_stack[-1]
 
-            tag = Type(self.reader.read_uint16())
-            if tag != Type.END:
+            tag = FieldType(self.reader.read_uint16())
+            if tag != FieldType.END:
                 if self.version == 1:
                     label_len = self.reader.read_uint32()
                     label = self.reader.read_string(label_len) if label_len > 0 else None
@@ -81,55 +60,55 @@ class ResourceParser:
                     label = strings[label_index-1] if label_index > 0 else None
                 size = self.reader.read_uint32()
 
-            if tag == Type.BEGIN:
+            if tag == FieldType.BEGIN:
                 new_dict = {}
                 dict_stack.append(new_dict)
                 if label is None:
                     cur_dict[len(cur_dict)] = new_dict
                 else:
                     cur_dict[label] = new_dict
-            elif tag == Type.END:
+            elif tag == FieldType.END:
                 dict_stack.pop()
-            elif tag == Type.BOOL:
+            elif tag == FieldType.BOOL:
                 cur_dict[label] = self.reader.read_bool8()
-            elif tag == Type.BYTES:
+            elif tag == FieldType.BYTES:
                 offset = self.reader.read_uint32()
                 cur_dict[label] = ArrayData(byte_pool, offset, size, self.reader.endianness)
-            elif tag == Type.DOUBLE:
+            elif tag == FieldType.DOUBLE:
                 cur_dict[label] = self.reader.read_float64()
-            elif tag == Type.FLOAT:
+            elif tag == FieldType.FLOAT:
                 cur_dict[label] = self.reader.read_float32()
-            elif tag == Type.INT32:
+            elif tag == FieldType.INT32:
                 cur_dict[label] = self.reader.read_int32()
-            elif tag == Type.INT64:
+            elif tag == FieldType.INT64:
                 cur_dict[label] = self.reader.read_int64()
-            elif tag == Type.MAT2:
+            elif tag == FieldType.MAT2:
                 cur_dict[label] = self.reader.read_mat2()
-            elif tag == Type.MAT3:
+            elif tag == FieldType.MAT3:
                 cur_dict[label] = self.reader.read_mat3()
-            elif tag == Type.MAT4:
+            elif tag == FieldType.MAT4:
                 cur_dict[label] = self.reader.read_mat4()
-            elif tag == Type.QUAT:
+            elif tag == FieldType.QUAT:
                 cur_dict[label] = self.reader.read_quat()
-            elif tag == Type.STRING:
+            elif tag == FieldType.STRING:
                 string_index = self.reader.read_uint32()
                 string = strings[string_index-1]
                 cur_dict[label] = string
-            elif tag == Type.STRINGV1:
+            elif tag == FieldType.STRINGV1:
                 string_len = self.reader.read_uint32()
                 string = self.reader.read_string(string_len)
                 cur_dict[label] = string
-            elif tag == Type.UINT32:
+            elif tag == FieldType.UINT32:
                 cur_dict[label] = self.reader.read_uint32()
-            elif tag == Type.UINT64:
+            elif tag == FieldType.UINT64:
                 cur_dict[label] = self.reader.read_uint64()
-            elif tag == Type.VEC2F:
+            elif tag == FieldType.VEC2F:
                 cur_dict[label] = self.reader.read_vec2f()
-            elif tag == Type.VEC3F:
+            elif tag == FieldType.VEC3F:
                 cur_dict[label] = self.reader.read_vec3f()
-            elif tag == Type.VEC4F:
+            elif tag == FieldType.VEC4F:
                 cur_dict[label] = self.reader.read_vec4f()
-            elif tag == Type.VEC4B:
+            elif tag == FieldType.VEC4B:
                 cur_dict[label] = self.reader.read_vec4b()
         return root_dict
 

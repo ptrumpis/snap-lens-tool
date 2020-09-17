@@ -1,24 +1,7 @@
-from enum import Enum
 import numpy as np
 from .resource_parser import ResourceParser
 from ..util.binary_reader import BinaryReader
-
-class Type(Enum):
-    INT8 = 1
-    UINT8 = 2
-    INT16 = 3
-    UINT16 = 4
-    FLOAT32 = 5
-    FLOAT16 = 6
-
-type_to_symbol = {
-    Type.INT8: "b",
-    Type.UINT8: "B",
-    Type.INT16: "h",
-    Type.UINT16: "H",
-    Type.FLOAT32: "f",
-    Type.FLOAT16: "f2"
-}
+from ..types.enums import AttrType, attr_type_to_symbol
 
 class Mesh:
     def __init__(self):
@@ -53,8 +36,8 @@ class MeshParser(ResourceParser):
         vert_dtype = []
         for attr in attributes:
             name = attr["semantic"]
-            comp_type = Type(attr["type"])
+            comp_type = AttrType(attr["type"])
             comp_count = attr["componentCount"]
-            type_symbol = type_to_symbol[comp_type]
+            type_symbol = attr_type_to_symbol[comp_type]
             vert_dtype.append((name, (type_symbol, comp_count)))
         return vert_dtype, attributes

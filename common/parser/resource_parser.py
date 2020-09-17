@@ -154,6 +154,8 @@ class ResourceParser:
             elif tag == FieldType.VEC4B:
                 value = self.reader.read_vec4b()
                 builder.add_value(label, value, "vec4b", "int8")
+            else:
+                raise ValueError("Tag not recognized")
         builder.infer_arrays(self.reader.data, self.header_size)
         return builder.root
 

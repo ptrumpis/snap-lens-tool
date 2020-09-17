@@ -105,7 +105,7 @@ class MeshExporter:
         serializer.write_uint32("index", index)
         serializer.write_int32("type", AttrType.FLOAT32.value)
         serializer.write_uint32("componentCount", 3)
-        serializer.write_bool("normalized", False)
+        serializer.write_bool8("normalized", False)
         serializer.write_uint32("offset", offset)
         index += 1
         offset += 12
@@ -116,7 +116,7 @@ class MeshExporter:
         serializer.write_uint32("index", index)
         serializer.write_int32("type", AttrType.FLOAT32.value)
         serializer.write_uint32("componentCount", 3)
-        serializer.write_bool("normalized", False)
+        serializer.write_bool8("normalized", False)
         serializer.write_uint32("offset", offset)
         index += 1
         offset += 12
@@ -128,7 +128,7 @@ class MeshExporter:
         serializer.write_uint32("index", index)
         serializer.write_int32("type", AttrType.FLOAT32.value)
         serializer.write_uint32("componentCount", 4)
-        serializer.write_bool("normalized", False)
+        serializer.write_bool8("normalized", False)
         serializer.write_uint32("offset", offset)
         index += 1
         offset += 16
@@ -141,7 +141,7 @@ class MeshExporter:
             serializer.write_uint32("index", index)
             serializer.write_int32("type", AttrType.FLOAT32.value)
             serializer.write_uint32("componentCount", 2)
-            serializer.write_bool("normalized", False)
+            serializer.write_bool8("normalized", False)
             serializer.write_uint32("offset", offset)
             index += 1
             offset += 8
@@ -153,7 +153,7 @@ class MeshExporter:
             serializer.write_uint32("index", index)
             serializer.write_int32("type", AttrType.UINT8.value)
             serializer.write_uint32("componentCount", 4)
-            serializer.write_bool("normalized", False)
+            serializer.write_bool8("normalized", False)
             serializer.write_uint32("offset", offset)
             index += 1
             offset += 4
@@ -162,10 +162,10 @@ class MeshExporter:
         serializer.end() # attributes
         serializer.end() # vertexLayout
 
-        serializer.write_bool("saveWithPadding", False)
+        serializer.write_bool8("saveWithPadding", False)
 
-        serializer.write_array("vertices", vertex_data)
-        serializer.write_array("indices", index_data)
+        serializer.write_bytes("vertices", vertex_data.tobytes())
+        serializer.write_bytes("indices", index_data.tobytes())
 
         serializer.begin("blendshapes")
         serializer.end()

@@ -37,19 +37,20 @@ class ResourceSerializer:
     def end(self):
         self.value_writer.write_uint16(FieldType.END.value)
 
-    def write_array(self, key, np_value):
-        self.value_writer.write_uint16(FieldType.BYTES.value)
-        self._write_string(key)
-        self.value_writer.write_uint32(np_value.nbytes)
-        self.value_writer.write_uint32(self.array_writer.size)
-        self.array_writer.write_bytes(np_value.tobytes())
-
-    def write_byte_array(self, key, value):
+    def write_bytes(self, key, value):
         self.value_writer.write_uint16(FieldType.BYTES.value)
         self._write_string(key)
         self.value_writer.write_uint32(len(value))
         self.value_writer.write_uint32(self.array_writer.size)
         self.array_writer.write_bytes(value)
+
+    def write_bytes_array(self, key, value):
+        self.value_writer.write_uint16(FieldType.BYTES.value)
+        self._write_string(key)
+        self.value_writer.write_uint32(len(value))
+        self.value_writer.write_uint32(self.array_writer.size)
+        for string in value:
+            self.array_writer.write_bytes(string)
 
     def write_string_array(self, key, value):
         self.value_writer.write_uint16(FieldType.BYTES.value)
@@ -60,13 +61,13 @@ class ResourceSerializer:
             self.array_writer.write_uint32(len(string))
             self.array_writer.write_string(string)
 
-    def write_bool(self, key, value):
+    def write_bool8(self, key, value):
         self.write(FieldType.BOOL, key, np.bool8(value))
 
-    def write_float64(self):
+    def write_float64(self, key, value):
         self.write(FieldType.DOUBLE, key, np.float64(value))
 
-    def write_float32(self):
+    def write_float32(self, key, value):
         self.write(FieldType.FLOAT, key, np.float32(value))
 
     def write_int32(self, key, value):
@@ -81,11 +82,29 @@ class ResourceSerializer:
     def write_uint64(self, key, value):
         self.write(FieldType.UINT64, key, np.uint64(value))
 
+    def write_vec2f(self, key, value):
+        self.write(FieldType.VEC2F, key, np.array(value, dtype=np.float32))
+
     def write_vec3f(self, key, value):
         self.write(FieldType.VEC3F, key, np.array(value, dtype=np.float32))
 
-    def write_vec2f(self, key, value):
-        self.write(FieldType.VEC2F, key, np.array(value, dtype=np.float32))
+    def write_vec4f(self, key, value):
+        self.write(FieldType.VEC4F, key, np.array(value, dtype=np.float32))
+
+    def write_vec4b(self, key, value):
+        self.write(FieldType.VEC4B, key, np.array(value, dtype=np.int8))
+
+    def write_mat2f(self, key, value):
+        self.write(FieldType.MAT2, key, np.array(value, dtype=np.float32))
+
+    def write_mat3f(self, key, value):
+        self.write(FieldType.MAT3, key, np.array(value, dtype=np.float32))
+
+    def write_mat4f(self, key, value):
+        self.write(FieldType.MAT4, key, np.array(value, dtype=np.float32))
+
+    def write_quatf(self, key, value):
+        self.write(FieldType.QUAT, key, np.array(value, dtype=np.float32))
 
     def write_string(self, key, value):
         self.value_writer.write_uint16(FieldType.STRING.value)

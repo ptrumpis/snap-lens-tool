@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 import os
 from lxml import etree as ET
 from enum import Enum
+from collections import deque
+import numpy as np
 
 package_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, package_path)
 
 from common.parser.resource_parser import ResourceParser
 from common.util.binary_reader import BinaryReader, BinaryReaderError
+from common.serializer.resource_serializer import ResourceSerializer
 
 class XmlResourceBuilder:
     def __init__(self):
@@ -87,8 +91,112 @@ class XmlResourceBuilder:
     def finished(self):
         return len(self.stack) == 0
 
+def resource_to_xml(filename, outfile):
+    parser = ResourceParser(filename)
+    xml = parser.parse(XmlResourceBuilder)
+    xml = ET.ElementTree(xml)
+    xml.write(outfile, pretty_print=True)
 
-parser = ResourceParser(sys.argv[1])
-xml = parser.parse(XmlResourceBuilder)
+def _xml_to_resource_rec(serializer, node):
+    key = node.attrib["key"] if "key" in node.attrib else None
+    if node.tag == "block":
+        serializer.begin(key)
+        for child in node:
+            _xml_to_resource_rec(serializer, child)
+        serializer.end()
+    elif node.tag == "bool8":
+        if node.text.lower() == "true":
+            value = True
+        elif node.text.lower() == "false":
+            value = False
+        else:
+            raise ValueError("Unexpected value for bool8")
+        serializer.write_bool8(key, value)
+    elif node.tag == "bytes":
+        value = "" if node.text is None else node.text
+        value = bytes.fromhex(value)
+        serializer.write_bytes(key, value)
+    elif node.tag == "float64":
+        serializer.write_float64(key, node.text)
+    elif node.tag == "float32":
+        serializer.write_float32(key, node.text)
+    elif node.tag == "uint32":
+        serializer.write_uint32(key, node.text)
+    elif node.tag == "int32":
+        serializer.write_int32(key, node.text)
+    elif node.tag == "uint64":
+        serializer.write_uint64(key, node.text)
+    elif node.tag == "int64":
+        serializer.write_int64(key, node.text)
+    elif node.tag == "mat2f":
+        values = [child.text for child in node]
+        serializer.write_mat2f(key, values)
+    elif node.tag == "mat3f":
+        values = [child.text for child in node]
+        serializer.write_mat3f(key, values)
+    elif node.tag == "mat4f":
+        values = [child.text for child in node]
+        serializer.write_mat4f(key, values)
+    elif node.tag == "quatf":
+        values = [child.text for child in node]
+        serializer.write_quatf(key, values)
+    elif node.tag == "string":
+        value = "" if node.text is None else node.text
+        serializer.write_string(key, value)
+    elif node.tag == "vec2f":
+        values = [child.text for child in node]
+        serializer.write_vec2f(key, values)
+    elif node.tag == "vec3f":
+        values = [child.text for child in node]
+        serializer.write_vec3f(key, values)
+    elif node.tag == "vec4f":
+        values = [child.text for child in node]
+        serializer.write_vec4f(key, values)
+    elif node.tag == "vec4b":
+        values = [child.text for child in node]
+        serializer.write_vec4b(key, values)
+    elif node.tag == "array":
+        if len(node) == 0:
+            serializer.write_bytes_array(key, [])
+        else:
+            sub_tag = node[0].tag
+            arr = []
+            for child in node:
+                if child.tag != sub_tag:
+                    raise ValueError("Array contains multiple types")
+                arr.append(child.text)
 
-ET.dump(xml)
+            if sub_tag == "bytes":
+                arr = [bytes.fromhex(x) for x in arr]
+                serializer.write_bytes_array(key, arr)
+            elif sub_tag == "string":
+                serializer.write_string_array(key, arr)
+            else:
+                raise ValueError("Array contains invalid type: " + sub_tag)
+    else:
+        raise ValueError("Tag not recognized: " + node.tag)
+
+def xml_to_resource(filename, outfile=None):
+    with open(filename, "rb") as f:
+        xml = ET.parse(f)
+    serializer = ResourceSerializer()
+
+    for child in xml.getroot():
+        _xml_to_resource_rec(serializer, child)
+
+    serializer.finalize()
+    serializer.to_file(outfile)
+
+parser = argparse.ArgumentParser(description="Convert Snapchat lens resource files (.scn, .mesh) to and from xml")
+parser.add_argument("input", help="input filename")
+parser.add_argument("output", help="output filename")
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument("-r", "--resource", action="store_true", help="convert resource file to xml")
+group.add_argument("-x", "--xml", action="store_true", help="convert xml to resource file")
+args = parser.parse_args()
+
+if args.resource:
+    resource_to_xml(args.input, args.output)
+elif args.xml:
+    xml_to_resource(args.input, args.output)
+

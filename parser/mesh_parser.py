@@ -1,6 +1,7 @@
 from enum import Enum
+import numpy as np
 from .resource_parser import ResourceParser
-from .binary_reader import BinaryReader
+from ..util.binary_reader import BinaryReader
 
 class Type(Enum):
     INT8 = 1
@@ -31,7 +32,8 @@ class MeshParser(ResourceParser):
         vert_dtype, attributes = MeshParser.build_dtype(json)
 
         reader = BinaryReader(json["vertices"].as_bytes())
-        parsed_verts = reader.read(vert_dtype, -1)
+        num_verts = len(reader.data) // np.dtype(vert_dtype).itemsize
+        parsed_verts = reader.read(vert_dtype, num_verts)
         mesh = Mesh()
         mesh.vertices = {}
         for i, attr in zip(range(len(attributes)), attributes):
@@ -39,7 +41,8 @@ class MeshParser(ResourceParser):
 
         face_dtype = [("face", ("H", 3))]
         reader = BinaryReader(json["indices"].as_bytes())
-        parsed_faces = reader.read(face_dtype, -1)
+        num_faces = len(reader.data) // np.dtype(face_dtype).itemsize
+        parsed_faces = reader.read(face_dtype, num_faces)
         mesh.indices = [face[0] for face in parsed_faces]
 
         return mesh

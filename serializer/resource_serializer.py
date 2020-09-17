@@ -1,4 +1,4 @@
-from ..parser.binary_writer import BinaryWriter
+from ..util.binary_writer import BinaryWriter
 from ..parser.resource_parser import Type
 import numpy as np
 

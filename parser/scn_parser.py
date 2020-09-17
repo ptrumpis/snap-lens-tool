@@ -1,7 +1,7 @@
 from enum import Enum
 import os.path
+from ..util.binary_reader import BinaryReader
 from .resource_parser import ResourceParser
-from .binary_reader import BinaryReader
 from .mesh_parser import MeshParser
 
 class Type(Enum):

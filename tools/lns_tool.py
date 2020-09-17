@@ -9,7 +9,7 @@ package_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, package_path)
 
 from parser.lns_parser import LnsParser
-from parser.binary_writer import BinaryWriter
+from util.binary_writer import BinaryWriter
 
 def extract(filename):
     parser = LnsParser(filename)

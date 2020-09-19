@@ -55,6 +55,10 @@ class BaseImporter:
 
     def create_material(self, material, name):
         bpy_mat = bpy.data.materials.new(name)
+
+        if not material.parsed:
+            return bpy_mat
+
         bpy_mat.use_nodes = True
         node_tree = bpy_mat.node_tree
         nodes = node_tree.nodes
@@ -93,7 +97,8 @@ class BaseImporter:
             node_tree.links.new(image_node.outputs["Color"], output_node.inputs[input1])
             if material.base_tex_uv > 0:
                 i = material.base_tex_uv - 2
-                node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
+                if uv_transform_nodes[i] is not None:
+                    node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
         if material.base_color is not None:
             output_node.inputs[input2].default_value = material.base_color
 
@@ -118,7 +123,8 @@ class BaseImporter:
             node_tree.links.new(normal_node.outputs["Normal"], output_node.inputs[input1])
             if material.normal_tex_uv > 0:
                 i = material.normal_tex_uv - 2
-                node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
+                if uv_transform_nodes[i] is not None:
+                    node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
         if material.detail_normal_tex is not None:
             normal_node = nodes.new("ShaderNodeNormalMap")
             image_node = nodes.new("ShaderNodeTexImage")
@@ -128,7 +134,8 @@ class BaseImporter:
             node_tree.links.new(normal_node.outputs["Normal"], output_node.inputs[input2])
             if material.detail_normal_tex_uv > 0:
                 i = material.detail_normal_tex_uv - 2
-                node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
+                if uv_transform_nodes[i] is not None:
+                    node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
 
         # create roughness/metallic nodes
         if material.material_params_tex is None:
@@ -154,10 +161,19 @@ class BaseImporter:
             node_tree.links.new(metallic_node.outputs["Value"], bsdf.inputs["Metallic"])
             if material.material_params_tex_uv > 0:
                 i = material.material_params_tex_uv - 2
-                node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
+                if uv_transform_nodes[i] is not None:
+                    node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
 
-        if material.reflection_intensity is not None:
-            bsdf.inputs["Specular"].default_value = material.reflection_intensity
-
+        # create opacity map
+        if material.opacity_tex is not None:
+            image_node = nodes.new("ShaderNodeTexImage")
+            image_node.image = material.opacity_tex.bpy
+            material.opacity_tex.bpy.colorspace_settings.name = "Non-Color"
+            node_tree.links.new(image_node.outputs["Color"], bsdf.inputs["Alpha"])
+            bpy_mat.blend_method = "BLEND"
+            if material.opacity_tex_uv > 0:
+                i = material.opacity_tex_uv - 2
+                if uv_transform_nodes[i] is not None:
+                    node_tree.links.new(uv_transform_nodes[i].outputs["Vector"], image_node.inputs["Vector"])
 
         return bpy_mat

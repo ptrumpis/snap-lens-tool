@@ -159,6 +159,8 @@ class ScnParser(ResourceParser):
             uid = mesh_json["uid"]
             if mesh_json["provider"]["type"] == "Provider.FileRenderObjectProvider":
                 filename = mesh_json["provider"]["filename"]
+                if name == "":
+                    name = filename
                 file = self._get_file(filename)
                 if file is not None:
                     parser = MeshParser(None, data=file)
@@ -173,6 +175,8 @@ class ScnParser(ResourceParser):
             uid = texture_json["uid"]
             if texture_json["provider"]["type"] == "Provider.FileTextureProvider":
                 filename = texture_json["provider"]["filename"]
+                if name == "":
+                    name = filename
                 file = self._get_file(filename)
                 if file is not None:
                     texture = TextureAsset(name, uid, file)

@@ -27,6 +27,7 @@ def write_files(files, dirname):
             f.write(data)
 
 def create(dirname):
+    dirname = os.path.dirname(dirname)
     files = read_files(dirname)
     filename = os.path.basename(dirname) + ".lns"
     write_lns(filename, files)

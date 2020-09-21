@@ -39,10 +39,6 @@ from bpy.types import Operator
 
 import os
 import traceback
-from .io.mesh_imp import MeshImporter
-from .io.lns_imp import LnsImporter
-from .io.scn_imp import ScnImporter
-from .io.mesh_exp import MeshExporter
 
 class ImportSnapchatMesh(Operator, ImportHelper):
     """Import a Snapchat mesh."""
@@ -77,6 +73,7 @@ class ImportSnapchatMesh(Operator, ImportHelper):
     def execute(self, context):
         ext = os.path.splitext(self.filepath)[1]
         if ext == ".mesh":
+            from .io.mesh_imp import MeshImporter
             if self.opt_batch:
                 dirname = os.path.dirname(self.filepath)
                 filepaths = [os.path.join(dirname, file) for file in os.listdir(dirname) if file.endswith(".mesh")]
@@ -90,13 +87,16 @@ class ImportSnapchatMesh(Operator, ImportHelper):
                     self.report({"ERROR"}, traceback.format_exc())
                     self.report({"ERROR"}, f"Failed to load {filepath}")
         elif ext == ".lns" or ext == "":
+            from .io.lns_imp import LnsImporter
             imp = LnsImporter(self.filepath, self)
             imp.do_import()
         elif ext == ".scn":
+            from .io.scn_imp import ScnImporter
             imp = ScnImporter(self.filepath, self)
             imp.do_import()
 
-        return {'FINISHED'}
+        return {"FINISHED"}
+
 
 class ExportSnapchatMesh(Operator, ImportHelper):
     """Export a Snapchat mesh."""
@@ -140,13 +140,11 @@ def register():
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
-
 def unregister():
     bpy.utils.unregister_class(ImportSnapchatMesh)
     bpy.utils.unregister_class(ExportSnapchatMesh)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
-
 
 if __name__ == "__main__":
     register()

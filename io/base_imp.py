@@ -1,7 +1,7 @@
 import bpy
 from bpy_extras.io_utils import axis_conversion
 import os
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 import mathutils
 
 class BaseImporter:
@@ -44,11 +44,11 @@ class BaseImporter:
     def create_image(self, image, name):
         # bpy doesn't support reading images from memory,
         # so temporarily write it to a file
-        extension = os.path.splitext(name)[1]
-        with NamedTemporaryFile(suffix=extension) as temp:
-            temp.write(image)
-            temp.flush()
-            bpy_image = bpy.data.images.load(temp.name)
+        with TemporaryDirectory() as tempdir:
+            tempfile_path = os.path.join(tempdir, name)
+            with open(tempfile_path, "wb") as tempfile:
+                tempfile.write(image)
+            bpy_image = bpy.data.images.load(tempfile_path)
             bpy_image.name = name
             bpy_image.pack()
         return bpy_image

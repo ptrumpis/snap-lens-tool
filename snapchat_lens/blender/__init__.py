@@ -1,16 +1,3 @@
-bl_info = {
-    "name": "Snapchat Mesh Importer",
-    "author": "Connor Virostek",
-    "blender": (2, 80, 0),
-    "version": (1, 0, 0),
-    "location": "File > Import > Snapchat Mesh (.mesh/.scn/.lns)",
-    "description": "Importer for Snapchat's mesh format used in Lenses.",
-    "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "Import-Export"
-}
-
 # Script reloading (if the user calls 'Reload Scripts' from Blender)
 # source: https://github.com/KhronosGroup/glTF-Blender-IO/
 def reload_package(module_dict_main):
@@ -73,7 +60,7 @@ class ImportSnapchatMesh(Operator, ImportHelper):
     def execute(self, context):
         ext = os.path.splitext(self.filepath)[1]
         if ext == ".mesh":
-            from .io.mesh_imp import MeshImporter
+            from .mesh_imp import MeshImporter
             if self.opt_batch:
                 dirname = os.path.dirname(self.filepath)
                 filepaths = [os.path.join(dirname, file) for file in os.listdir(dirname) if file.endswith(".mesh")]
@@ -87,11 +74,11 @@ class ImportSnapchatMesh(Operator, ImportHelper):
                     self.report({"ERROR"}, traceback.format_exc())
                     self.report({"ERROR"}, f"Failed to load {filepath}")
         elif ext == ".lns" or ext == "":
-            from .io.lns_imp import LnsImporter
+            from .lns_imp import LnsImporter
             imp = LnsImporter(self.filepath, self)
             imp.do_import()
         elif ext == ".scn":
-            from .io.scn_imp import ScnImporter
+            from .scn_imp import ScnImporter
             imp = ScnImporter(self.filepath, self)
             imp.do_import()
 
@@ -123,6 +110,7 @@ class ExportSnapchatMesh(Operator, ImportHelper):
     )
 
     def execute(self, context):
+        from .mesh_exp import MeshExporter
         exp = MeshExporter(self.filepath, self)
         exp.do_export()
 
@@ -145,8 +133,3 @@ def unregister():
     bpy.utils.unregister_class(ExportSnapchatMesh)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
-
-if __name__ == "__main__":
-    register()
-
-    bpy.ops.import_mesh.snapchat_mesh('INVOKE_DEFAULT')

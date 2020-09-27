@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
 import os
 import zstd
 
-package_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, package_path)
-
-from common.parser.lns_parser import LnsParser
-from common.util.binary_writer import BinaryWriter
+from snapchat_lens.common.parser.lns_parser import LnsParser
+from snapchat_lens.common.util.binary_writer import BinaryWriter
 
 def extract(filename):
     parser = LnsParser(filename)

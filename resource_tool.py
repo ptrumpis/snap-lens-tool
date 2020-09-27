@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
-import os
 from lxml import etree as ET
-from enum import Enum
-from collections import deque
-import numpy as np
 
-package_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, package_path)
-
-from common.parser.resource_parser import ResourceParser
-from common.util.binary_reader import BinaryReader, BinaryReaderError
-from common.serializer.resource_serializer import ResourceSerializer
+from snapchat_lens.common.parser.resource_parser import ResourceParser
+from snapchat_lens.common.util.binary_reader import BinaryReader, BinaryReaderError
+from snapchat_lens.common.serializer.resource_serializer import ResourceSerializer
 
 class XmlResourceBuilder:
     def __init__(self):

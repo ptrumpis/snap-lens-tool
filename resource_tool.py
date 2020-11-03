@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import sys
 from lxml import etree as ET
 
 from snapchat_lens.common.parser.resource_parser import ResourceParser
@@ -44,7 +45,7 @@ class XmlResourceBuilder:
             # "size" represents the number of elements (of unknown length) in the array
             # "true size" is the number of bytes in the array
             if i == len(self.arrays) - 1:
-                true_size = header_size - offset
+                true_size = len(data) - header_size - offset
             else:
                 true_size = self.arrays[i+1][0] - offset
 
@@ -73,7 +74,7 @@ class XmlResourceBuilder:
                         sub_el = ET.SubElement(el, "string")
                         sub_el.text = string
                 elif true_size % size != 0:
-                    raise ValueError("Failed to infer array structure")
+                    raise ValueError(f"Failed to infer array structure at offset {header_size + offset}")
                 else:
                     reader.seek(0)
                     while not reader.finished():

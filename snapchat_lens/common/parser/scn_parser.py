@@ -206,7 +206,7 @@ class ScnParser(ResourceParser):
         tex_types = ["baseTex", "normalTex", "detailNormalTex", "materialParamsTex", "opacityTex", "reflectionTex", "rimColorTex"]
         tex_values = {tex_type: [None, 0] for tex_type in tex_types}
         for tex_type in tex_types:
-            if tex_type in props:
+            if tex_type in props and "value" in props[tex_type] and "uid" in props[tex_type]["value"]:
                 tex_values[tex_type][0] = self._get_asset(self.scene.textures, props[tex_type]["value"]["uid"])
                 uv_define = tex_type + "UV"
                 if uv_define in material.defines:

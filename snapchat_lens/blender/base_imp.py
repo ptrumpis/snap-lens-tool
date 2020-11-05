@@ -34,7 +34,24 @@ class BaseImporter:
                 for vert_idx, loop_idx in zip(face.vertices, face.loop_indices):
                     vert_colors.data[loop_idx].color = mesh.vertices["color"][vert_idx]
         bpy_mesh.update()
+
         return bpy_mesh
+
+    def create_skeleton(self, bones, name):
+        bpy_arm = bpy.data.armatures.new(name)
+        bpy_arm_obj = self.create_object(bpy_arm, name)
+        bpy_arm_obj.select_set(True)
+        bpy.context.view_layer.objects.active = bpy_arm_obj
+        bpy.ops.object.mode_set(mode='EDIT')
+        for bone in bones:
+            bpy_bone = bpy_arm.edit_bones.new(bone.name)
+            bpy_bone.select = True
+            bpy_bone.tail[0] = 1
+            mat_basis = bpy_bone.matrix
+            bpy_bone.matrix = mathutils.Matrix(bone.invmat).inverted_safe() @ mat_basis
+            bpy_bone.select = False
+        bpy.ops.object.mode_set(mode='OBJECT')
+        return bpy_arm_obj
 
     def create_object(self, bpy_mesh, name):
         bpy_object = bpy.data.objects.new(name, bpy_mesh)

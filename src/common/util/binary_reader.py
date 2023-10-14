@@ -24,7 +24,7 @@ class BinaryReader:
     def read_uint8(self):
         return self.read("B")[0]
 
-    def read_uint16(self):
+    def read_int16(self):
         return self.read("h")[0]
 
     def read_uint16(self):

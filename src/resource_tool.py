@@ -185,15 +185,16 @@ def xml_to_resource(filename, outfile=None):
     serializer.to_file(outfile)
 
 
-parser = argparse.ArgumentParser(description="Convert Snapchat lens resource files (.scn, .mesh) to and from xml")
-parser.add_argument("input", help="input filename")
-parser.add_argument("output", help="output filename")
-group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument("-r", "--resource", action="store_true", help="convert resource file to xml")
-group.add_argument("-x", "--xml", action="store_true", help="convert xml to resource file")
-args = parser.parse_args()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Convert Snapchat lens resource files (.scn, .mesh) to and from xml")
+    parser.add_argument("input", help="input filename")
+    parser.add_argument("output", help="output filename")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-r", "--resource", action="store_true", help="convert resource file to xml")
+    group.add_argument("-x", "--xml", action="store_true", help="convert xml to resource file")
+    args = parser.parse_args()
 
-if args.resource:
-    resource_to_xml(args.input, args.output)
-elif args.xml:
-    xml_to_resource(args.input, args.output)
+    if args.resource:
+        resource_to_xml(args.input, args.output)
+    elif args.xml:
+        xml_to_resource(args.input, args.output)

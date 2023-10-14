@@ -78,14 +78,15 @@ def write_lns(filename, files):
     lns_writer.to_file(filename)
 
 
-parser = argparse.ArgumentParser(description="Extract or create Snapchat lens archives")
-parser.add_argument("input", help="lens archive or directory")
-group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument("-x", "--extract", action="store_true", help="extract an archive")
-group.add_argument("-c", "--create", action="store_true", help="create an archive")
-args = parser.parse_args()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Extract or create Snapchat lens archives")
+    parser.add_argument("input", help="lens archive or directory")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-x", "--extract", action="store_true", help="extract an archive")
+    group.add_argument("-c", "--create", action="store_true", help="create an archive")
+    args = parser.parse_args()
 
-if args.extract:
-    extract(args.input)
-elif args.create:
-    create(args.input)
+    if args.extract:
+        extract(args.input)
+    elif args.create:
+        create(args.input)

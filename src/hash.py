@@ -25,12 +25,13 @@ def calc_hash(data):
     return h
 
 
-parser = argparse.ArgumentParser(description="Hash a file using Snapchat's hashing method")
-parser.add_argument("input", help="input file")
-args = parser.parse_args()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Hash a file using Snapchat's hashing method")
+    parser.add_argument("input", help="input file")
+    args = parser.parse_args()
 
-with open(args.input, "rb") as f:
-    data = f.read()
+    with open(args.input, "rb") as f:
+        data = f.read()
 
-h = calc_hash(data)
-print(h)
+    h = calc_hash(data)
+    print(h)

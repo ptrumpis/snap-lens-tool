@@ -1,2 +1,6 @@
 # Covers JetBrains IDEs
 .idea/
+
+# PyInstaller
+build/
+dist/

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class AttrType(Enum):
     INT8 = 1
     UINT8 = 2
@@ -7,6 +8,7 @@ class AttrType(Enum):
     UINT16 = 4
     FLOAT32 = 5
     FLOAT16 = 6
+
 
 attr_type_to_symbol = {
     AttrType.INT8: "b",
@@ -16,6 +18,7 @@ attr_type_to_symbol = {
     AttrType.FLOAT32: "f",
     AttrType.FLOAT16: "f2"
 }
+
 
 class FieldType(Enum):
     BEGIN = 0x0e
@@ -38,4 +41,3 @@ class FieldType(Enum):
     VEC3F = 0x08
     VEC4F = 0x09
     VEC4B = 0x17
-

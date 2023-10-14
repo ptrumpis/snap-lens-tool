@@ -1,7 +1,8 @@
-from enum import Enum
 import numpy as np
-from ..util.binary_reader import BinaryReader, BinaryReaderError
+
 from ..types.enums import FieldType
+from ..util.binary_reader import BinaryReader
+
 
 class JsonResourceBuilder:
     def __init__(self):
@@ -36,12 +37,13 @@ class JsonResourceBuilder:
             if i == len(self.arrays) - 1:
                 true_size = len(data) - header_size - offset
             else:
-                true_size = self.arrays[i+1][0] - offset
+                true_size = self.arrays[i + 1][0] - offset
 
-            arr.data = data[header_size+offset:header_size+offset+true_size]
+            arr.data = data[header_size + offset:header_size + offset + true_size]
 
     def finished(self):
         return len(self.stack) == 0
+
 
 class ArrayData:
     def __init__(self, data=None):
@@ -62,6 +64,7 @@ class ArrayData:
         reader = BinaryReader(self.data)
         count = len(self.data) // np.dtype(dtype).itemsize
         return reader.read(dtype, count)
+
 
 class ResourceParser:
     def __init__(self, filename, data=None):
@@ -91,7 +94,7 @@ class ResourceParser:
                     label = self.reader.read_string(label_len) if label_len > 0 else None
                 elif self.version == 2:
                     label_index = self.reader.read_uint32()
-                    label = strings[label_index-1] if label_index > 0 else None
+                    label = strings[label_index - 1] if label_index > 0 else None
                 size = self.reader.read_uint32()
 
             if tag == FieldType.BEGIN:
@@ -130,7 +133,7 @@ class ResourceParser:
                 builder.add_value(label, value, "quatf", "float32")
             elif tag == FieldType.STRING:
                 string_index = self.reader.read_uint32()
-                value = strings[string_index-1]
+                value = strings[string_index - 1]
                 builder.add_value(label, value, "string")
             elif tag == FieldType.STRINGV1:
                 string_len = self.reader.read_uint32()
@@ -171,4 +174,3 @@ class ResourceParser:
         self.reader.seek(0x48)
         self.json = self._parse_values(builder_cls())
         return self.json
-

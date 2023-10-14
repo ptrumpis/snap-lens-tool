@@ -1,6 +1,8 @@
-from ..util.binary_writer import BinaryWriter
-from ..types.enums import FieldType
 import numpy as np
+
+from ..types.enums import FieldType
+from ..util.binary_writer import BinaryWriter
+
 
 class ResourceSerializer:
     def __init__(self):

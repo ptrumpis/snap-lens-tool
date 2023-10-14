@@ -1,7 +1,9 @@
 import numpy as np
+
 from .resource_parser import ResourceParser
-from ..util.binary_reader import BinaryReader
 from ..types.enums import AttrType, attr_type_to_symbol
+from ..util.binary_reader import BinaryReader
+
 
 class Bone:
     def __init__(self, name, invmat):
@@ -10,11 +12,13 @@ class Bone:
         self.indices = []
         self.weights = []
 
+
 class Mesh:
     def __init__(self):
         self.vertices = {}
         self.indices = []
         self.bones = []
+
 
 class MeshParser(ResourceParser):
     def parse(self):
@@ -49,7 +53,7 @@ class MeshParser(ResourceParser):
         for rgroup_json in json["rgroups"].values():
             index_offset = rgroup_json["indexOffset"]
             index_count = rgroup_json["indexCount"]
-            for index in np.unique(indices_flat[index_offset:index_offset+index_count]):
+            for index in np.unique(indices_flat[index_offset:index_offset + index_count]):
                 for bone_data in mesh.vertices["boneData"][index]:
                     weight = bone_data - np.floor(bone_data)
                     bone_map_index = int(bone_data)

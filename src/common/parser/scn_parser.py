@@ -1,26 +1,29 @@
-from enum import Enum
 import os.path
-from ..util.binary_reader import BinaryReader
-from .resource_parser import ResourceParser
+
 from .mesh_parser import MeshParser
+from .resource_parser import ResourceParser
+
 
 class Asset:
     def __init__(self, name, uid):
         self.full_name = name
         self.name = os.path.splitext(os.path.basename(name))[0]
         self.uid = uid
-        self.bpy = None # used by importer
+        self.bpy = None  # used by importer
+
 
 class MeshAsset(Asset):
     def __init__(self, name, uid, data):
         super().__init__(name, uid)
         self.data = data
 
+
 class TextureAsset(Asset):
     def __init__(self, name, uid, data):
         super().__init__(name, uid)
         self.extension = os.path.splitext(name)[1]
         self.data = data
+
 
 class MaterialAsset(Asset):
     def __init__(self, name, uid):
@@ -61,6 +64,7 @@ class MaterialAsset(Asset):
 
         self.defines = {}
 
+
 class SceneObject:
     def __init__(self, name, uid, location, rotation, scale):
         self.name = name
@@ -71,10 +75,12 @@ class SceneObject:
         self.components = []
         self.children = []
 
+
 class Component:
     def __init__(self, name, uid):
         self.name = name
         self.uid = uid
+
 
 class RenderComponent(Component):
     def __init__(self, name, uid, mesh):
@@ -82,12 +88,14 @@ class RenderComponent(Component):
         self.mesh = mesh
         self.materials = []
 
+
 class Scene:
     def __init__(self):
-        self.meshes = {}    #
+        self.meshes = {}  #
         self.textures = {}  # uid => filename
-        self.materials = {} #
+        self.materials = {}  #
         self.sceneobjects = []
+
 
 class ScnParser(ResourceParser):
     def __init__(self, filename, data=None, files=None):
@@ -203,7 +211,8 @@ class ScnParser(ResourceParser):
         props = {prop["name"]: prop for prop in material_json["passes"][0]["properties"].values()}
 
         # gather texture properties
-        tex_types = ["baseTex", "normalTex", "detailNormalTex", "materialParamsTex", "opacityTex", "reflectionTex", "rimColorTex"]
+        tex_types = ["baseTex", "normalTex", "detailNormalTex", "materialParamsTex", "opacityTex", "reflectionTex",
+                     "rimColorTex"]
         tex_values = {tex_type: [None, 0] for tex_type in tex_types}
         for tex_type in tex_types:
             if tex_type in props and "value" in props[tex_type] and "uid" in props[tex_type]["value"]:
@@ -227,7 +236,8 @@ class ScnParser(ResourceParser):
             material.rim_color_tex, material.rim_color_tex_uv = tex_values["rimColorTex"]
 
         # gather regular properties
-        prop_types = ["baseColor", "metallic", "roughness", "reflectionIntensity", "rimColor", "rimIntensity", "rimExponent", "uv2Scale", "uv2Offset", "uv3Scale", "uv3Offset"]
+        prop_types = ["baseColor", "metallic", "roughness", "reflectionIntensity", "rimColor", "rimIntensity",
+                      "rimExponent", "uv2Scale", "uv2Offset", "uv3Scale", "uv3Offset"]
         prop_values = {prop_type: None for prop_type in prop_types}
         for prop_type in prop_types:
             if prop_type in props:
@@ -248,7 +258,6 @@ class ScnParser(ResourceParser):
         if "ENABLE_UV3" in material.defines:
             material.uv3_scale = prop_values["uv3Scale"]
             material.uv3_offset = prop_values["uv3Offset"]
-
 
     ##### helpers #####
 

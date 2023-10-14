@@ -1,6 +1,8 @@
-import zstd
-from ..util.binary_reader import BinaryReader
+import zstandard as zstd
+
 from .exceptions import ParserException
+from ..util.binary_reader import BinaryReader
+
 
 class LnsParser:
     def __init__(self, filename, data=None):

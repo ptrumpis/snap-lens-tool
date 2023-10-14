@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class BinaryWriter:
     def __init__(self, endianness="<"):
         self.endianness = endianness

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
+
 from lxml import etree as ET
 
-from snapchat_lens.common.parser.resource_parser import ResourceParser
-from snapchat_lens.common.util.binary_reader import BinaryReader, BinaryReaderError
-from snapchat_lens.common.serializer.resource_serializer import ResourceSerializer
+from common.parser.resource_parser import ResourceParser
+from common.serializer.resource_serializer import ResourceSerializer
+from common.util.binary_reader import BinaryReader, BinaryReaderError
+
 
 class XmlResourceBuilder:
     def __init__(self):
@@ -47,9 +48,9 @@ class XmlResourceBuilder:
             if i == len(self.arrays) - 1:
                 true_size = len(data) - header_size - offset
             else:
-                true_size = self.arrays[i+1][0] - offset
+                true_size = self.arrays[i + 1][0] - offset
 
-            raw = data[header_size+offset:header_size+offset+true_size]
+            raw = data[header_size + offset:header_size + offset + true_size]
 
             if true_size == size:
                 el.text = raw.hex()
@@ -84,11 +85,13 @@ class XmlResourceBuilder:
     def finished(self):
         return len(self.stack) == 0
 
+
 def resource_to_xml(filename, outfile):
     parser = ResourceParser(filename)
     xml = parser.parse(XmlResourceBuilder)
     xml = ET.ElementTree(xml)
     xml.write(outfile, pretty_print=True)
+
 
 def _xml_to_resource_rec(serializer, node):
     key = node.attrib["key"] if "key" in node.attrib else None
@@ -169,6 +172,7 @@ def _xml_to_resource_rec(serializer, node):
     else:
         raise ValueError("Tag not recognized: " + node.tag)
 
+
 def xml_to_resource(filename, outfile=None):
     with open(filename, "rb") as f:
         xml = ET.parse(f)
@@ -179,6 +183,7 @@ def xml_to_resource(filename, outfile=None):
 
     serializer.finalize()
     serializer.to_file(outfile)
+
 
 parser = argparse.ArgumentParser(description="Convert Snapchat lens resource files (.scn, .mesh) to and from xml")
 parser.add_argument("input", help="input filename")
@@ -192,4 +197,3 @@ if args.resource:
     resource_to_xml(args.input, args.output)
 elif args.xml:
     xml_to_resource(args.input, args.output)
-

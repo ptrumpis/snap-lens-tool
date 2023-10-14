@@ -39,7 +39,7 @@ def read_files(dirname):
     for dirpath, dirnames, filenames in os.walk(real_path):
         for filename in filenames:
             full_path = dirpath + "/" + filename
-            lns_path = full_path[len(real_path):]
+            lns_path = full_path[len(real_path):].replace(os.sep, '/')
             with open(full_path, "rb") as f:
                 files[lns_path] = f.read()
     return files

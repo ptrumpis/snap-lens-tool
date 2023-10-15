@@ -2,6 +2,8 @@
 
 A Swiss Army Knife for Snapchat Lenses.
 
+![Snap Lens Tool](https://github.com/ptrumpis/snap-lens-tool/assets/116500225/7c59e63b-5597-4375-bfc1-1785c386c6b0)
+
 The code is based on the [Blender add-on for importing/exporting Snapchat lenses](https://github.com/cvirostek/snapchat-lens-blender-io) by [Connor Virostek](https://github.com/cvirostek).
 
 ## ⭐ Features

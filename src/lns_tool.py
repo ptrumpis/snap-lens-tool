@@ -2,18 +2,24 @@
 
 import argparse
 import os
+import re
 
 import zstandard as zstd
 
-from common.parser.lns_parser import LnsParser
-from common.util.binary_writer import BinaryWriter
+from src.common.parser.lns_parser import LnsParser
+from src.common.util.binary_writer import BinaryWriter
 
 
-def extract(filename):
+def extract(filename, output=None):
     parser = LnsParser(filename)
     files = parser.parse()
-    output_name = os.path.splitext(os.path.basename(filename))[0][:10] + "_extracted"
-    write_files(files, output_name)
+
+    if output is None:
+        output_dir = os.path.dirname(filename)
+        output_name = os.path.splitext(os.path.basename(filename))[0]
+        output = os.path.join(output_dir, f"_{output_name}")
+
+    write_files(files, output)
 
 
 def write_files(files, dirname):
@@ -27,17 +33,21 @@ def write_files(files, dirname):
 
 
 def create(dirname):
-    dirname = os.path.dirname(dirname)
+    dirname = os.path.realpath(dirname)
     files = read_files(dirname)
-    filename = os.path.basename(dirname) + ".lns"
+    filename = dirname + ".lns"
     write_lns(filename, files)
 
 
 def read_files(dirname):
     files = {}
     real_path = os.path.realpath(dirname)
+    pattern = r"^_.+\.xml$"
     for dirpath, dirnames, filenames in os.walk(real_path):
         for filename in filenames:
+            if re.match(pattern, filename):
+                continue
+
             full_path = dirpath + "/" + filename
             lns_path = full_path[len(real_path):].replace(os.sep, '/')
             with open(full_path, "rb") as f:

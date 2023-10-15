@@ -13,17 +13,21 @@ The code is based on the [Blender add-on for importing/exporting Snapchat lenses
 - Auto download missing lens assets.
 
 ## 🚀 Usage
-[📥 Download](https://github.com/ptrumpis/snap-lens-tool/releases/latest) and run the latest binary.
+[📥 Download](https://github.com/ptrumpis/snap-lens-tool/releases/latest) the latest binary or source files.
+
+Run the script or the pre-build binary (if available).
+
+See the information below to build your own binary.
 
 ## 🛠️ Do It Yourself Instructions
-### 🧩 Python Dependencies
+### 🧩 Install Python Dependencies
 Install project dependencies from `requirements.txt` with **pip**
 
 ```sh
 pip install -r requirements.txt
 ```
 
-### 🎨 UI Changes (optional)
+### 🎨 Edit GUI (optional)
 
 Make changes to `dialog.ui` with **Qt Designer**
 ```sh

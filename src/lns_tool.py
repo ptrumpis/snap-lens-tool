@@ -17,7 +17,7 @@ def extract(filename, output=None):
     if output is None:
         output_dir = os.path.dirname(filename)
         output_name = os.path.splitext(os.path.basename(filename))[0]
-        output = os.path.join(output_dir, f"_{output_name}")
+        output = os.path.join(output_dir, f"{output_name}_unpacked")
 
     write_files(files, output)
 
@@ -32,11 +32,13 @@ def write_files(files, dirname):
             f.write(data)
 
 
-def create(dirname):
+def create(dirname, file_ext=".lns"):
     dirname = os.path.realpath(dirname)
     files = read_files(dirname)
-    filename = dirname + ".lns"
-    write_lns(filename, files)
+    file_name = dirname
+    if file_ext is not None:
+        file_name = f"{dirname}{file_ext}"
+    write_lns(file_name, files)
 
 
 def read_files(dirname):

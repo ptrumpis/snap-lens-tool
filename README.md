@@ -11,54 +11,33 @@ Special thanks to user **ghalta22** for finding the fallback patch.
 ## ⭐ Features
 - Unpack Snapchat lenses.
 - Re-Pack modified Snapchat lenses.
-- Set Snap Camera fallback mode on lenses.
+- Disable Snap Camera fallback mode on lenses.
 
 ## 🚧 Planned Features (Work in Progress)
+- Download lens from Snapchat.
+- Upload lens/cache to Snap Camera Server.
 - Auto download missing lens assets.
 
 ## 🚀 Usage
-[📥 Download](https://github.com/ptrumpis/snap-lens-tool/releases/latest) the latest binary or source files.
 
-Run the script or the pre-build binary (if available).
+You can run the script or download a pre-build binary.
 
-See the information below to build your own binary.
+- [📥 Download](https://github.com/ptrumpis/snap-lens-tool/releases/latest) and run the latest pre-build binary (if available).
+- 📜 Download the source and run the `snap_lens_tool.py` script yourself.
 
-## 🛠️ Do It Yourself Instructions
-### 🧩 Install Python Dependencies
-Install project dependencies from `requirements.txt` with **pip**
+### Development & Build Instructions
+Please see the [🛠️ Do It Yourself Instructions](docs/DO_IT_YOURSELF.md) for development and to build your own binary.
 
+### Run the script
+You need to have *Python 3* installed, and you need to install the requirements with *pip*:
 ```sh
 pip install -r requirements.txt
 ```
 
-### 🎨 Edit GUI (optional)
-
-Make changes to `dialog.ui` with **Qt Designer**
+You can start **Snap Lens Tool** with:
 ```sh
-qt5-tools designer dialog.ui
+python snap_lens_tool.py
 ```
-
-Convert xml design representation to python code
-```sh
-pyuic5 -x dialog.ui -o src/qt/dialog.py
-```
-
-### ‍👨‍💻 Build binary (optional)
-
-Install PyInstaller with **pip**
-```sh
-pip install pyinstaller
-```
-
-Create standalone binary with **PyInstaller**
-```sh
-pyinstaller --onedir --noconsole snap_lens_tool.py
-```
-
-Use `--onefile` instead of `--onedir` to output a single file.
-
-The binary output files can be found under `./dist`.
-
 
 ## 💬 Community & Feedback
 Please go here if you have questions or feedback:

@@ -2,7 +2,7 @@
 
 A Swiss Army Knife for Snapchat Lenses.
 
-![Snap Lens Tool](https://github.com/ptrumpis/snap-lens-tool/assets/116500225/7c59e63b-5597-4375-bfc1-1785c386c6b0)
+![Snap Lens Tool](https://github.com/ptrumpis/snap-lens-tool/assets/116500225/5210ef82-0239-481e-89c6-c59fe0f05bd9)
 
 The code is based on the [Blender add-on for importing/exporting Snapchat lenses](https://github.com/cvirostek/snapchat-lens-blender-io) by [Connor Virostek](https://github.com/cvirostek).
 
@@ -14,8 +14,10 @@ Special thanks to user **ghalta22** for finding the fallback patch.
 - Disable Snap Camera fallback mode on lenses.
 - Download lenses from Snapchat
 
+![download](https://github.com/ptrumpis/snap-lens-tool/assets/116500225/3db4d46f-7d37-47bf-b4c5-8cba07687bad)
+
 ## 🚧 Planned Features (Work in Progress)
-- Upload lens/cache to Snap Camera Server (v0.8).
+- Upload lens/cache to [Snap Camera Server](https://github.com/ptrumpis/snap-camera-server) (v0.8).
 - Auto download missing lens assets (v0.9).
 - Fix "Unknown blend mode" (v1.0).
 - Fix AMD display bug (v1.x).

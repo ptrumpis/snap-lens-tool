@@ -1,5 +1,7 @@
+beautifulsoup4==4.12.2
 lxml==4.9.3
 numpy==1.26.1
-zstandard==0.22.0
 pyqt5==5.15.9
 pyqt5-tools==5.15.9.3.3
+requests==2.31.0
+zstandard==0.22.0

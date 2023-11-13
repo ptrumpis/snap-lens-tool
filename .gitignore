@@ -4,3 +4,5 @@
 # PyInstaller
 build/
 dist/
+__pycache__
+snap_lens_tool.spec

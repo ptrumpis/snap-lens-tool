@@ -6,14 +6,13 @@ import re
 
 import zstandard as zstd
 
-from src.common.parser.lns_parser import LnsParser
-from src.common.util.binary_writer import BinaryWriter
+from ..common.parser.lns_parser import LnsParser
+from ..common.util.binary_writer import BinaryWriter
 
 
 def extract(filename, output=None):
     parser = LnsParser(filename)
     files = parser.parse()
-
     if output is None:
         output_dir = os.path.dirname(filename)
         output_name = os.path.splitext(os.path.basename(filename))[0]
@@ -32,13 +31,13 @@ def write_files(files, dirname):
             f.write(data)
 
 
-def create(dirname, file_ext=".lns"):
+def create(dirname, output=None):
     dirname = os.path.realpath(dirname)
     files = read_files(dirname)
-    file_name = dirname
-    if file_ext is not None:
-        file_name = f"{dirname}{file_ext}"
-    write_lns(file_name, files)
+    if output is None:
+        output = f"{dirname}.lns"
+
+    write_lns(output, files)
 
 
 def read_files(dirname):

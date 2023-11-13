@@ -4,9 +4,9 @@ import argparse
 
 from lxml import etree as ET
 
-from src.common.parser.resource_parser import ResourceParser
-from src.common.serializer.resource_serializer import ResourceSerializer
-from src.common.util.binary_reader import BinaryReader, BinaryReaderError
+from ..common.parser.resource_parser import ResourceParser
+from ..common.serializer.resource_serializer import ResourceSerializer
+from ..common.util.binary_reader import BinaryReader, BinaryReaderError
 
 
 class XmlResourceBuilder:

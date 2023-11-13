@@ -12,18 +12,21 @@ Special thanks to user **ghalta22** for finding the fallback patch.
 - Unpack Snapchat lenses.
 - Re-Pack modified Snapchat lenses.
 - Disable Snap Camera fallback mode on lenses.
+- Download lenses from Snapchat
 
 ## 🚧 Planned Features (Work in Progress)
-- Download lens from Snapchat.
-- Upload lens/cache to Snap Camera Server.
-- Auto download missing lens assets.
+- Upload lens/cache to Snap Camera Server (v0.8).
+- Auto download missing lens assets (v0.9).
+- Fix "Unknown blend mode" (v1.0).
+- Fix AMD display bug (v1.x).
 
 ## 🚀 Usage
-
 You can run the script or download a pre-build binary.
 
 - [📥 Download](https://github.com/ptrumpis/snap-lens-tool/releases/latest) and run the latest pre-build binary (if available).
-- 📜 Download the source and run the `snap_lens_tool.py` script yourself.
+- 📜 Download the source and run the `snap_lens_tool.py` script yourself (see below).
+
+If you just want to unpack files take a look at [Web based online tool for unpacking lenses](https://ptrumpis.github.io/snap-lens-file-extractor/).
 
 ### Development & Build Instructions
 Please see the [🛠️ Do It Yourself Instructions](docs/DO_IT_YOURSELF.md) for development and to build your own binary.

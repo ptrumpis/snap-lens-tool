@@ -12,12 +12,7 @@ pip install -r requirements.txt
 
 Make changes to `dialog.ui` with *Qt Designer*
 ```sh
-qt5-tools designer dialog.ui
-```
-
-Convert xml design representation to python code
-```sh
-pyuic5 -x dialog.ui -o src/qt/dialog.py
+qt5-tools designer main.ui
 ```
 
 ## ‍👨‍💻 Build Binary

@@ -97,14 +97,28 @@
      <item>
       <layout class="QHBoxLayout" name="itemButtonLayout">
        <item>
-        <widget class="QPushButton" name="addButton">
-         <property name="toolTip">
-          <string>Add packed lens files (.lns) files or unpacked lens folders</string>
-         </property>
-         <property name="text">
-          <string>Add Lens Files/Folder</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="addFilesButton">
+           <property name="toolTip">
+            <string>Add packed lens files (.lns) files</string>
+           </property>
+           <property name="text">
+            <string>Add Files</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addFolderButton">
+           <property name="toolTip">
+            <string>Add unpacked lens folder</string>
+           </property>
+           <property name="text">
+            <string>Add Folder</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QPushButton" name="removeButton">
@@ -112,7 +126,7 @@
           <string>Remove the selected files and folders</string>
          </property>
          <property name="text">
-          <string>Remove Selected Items</string>
+          <string>Remove Selected</string>
          </property>
         </widget>
        </item>

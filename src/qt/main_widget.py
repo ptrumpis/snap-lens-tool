@@ -17,7 +17,8 @@ class MainWidget(QMainWindow):
 
         uic.loadUi('main.ui', self)
 
-        self.addButton.clicked.connect(self.onAddButtonClicked)
+        self.addFilesButton.clicked.connect(self.onAddFilesButtonClicked)
+        self.addFolderButton.clicked.connect(self.onAddFolderButtonClicked)
         self.removeButton.clicked.connect(self.onRemoveButtonClicked)
         self.clearButton.clicked.connect(self.onClearButtonClicked)
         self.unpackButton.clicked.connect(self.onUnpackButtonClicked)
@@ -29,15 +30,22 @@ class MainWidget(QMainWindow):
 
         self.toggleButtons()
 
-    def onAddButtonClicked(self):
+    def onAddFilesButtonClicked(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly | QFileDialog.ExistingFile
-        files, _ = QFileDialog.getOpenFileNames(self, "Select lens files and folder", "",
+        files, _ = QFileDialog.getOpenFileNames(self, "Select lens files", "",
                                                 "Lens files (*.lns);;All Files (*)", options=options)
         if not files:
             return
 
         self.treeWidget.addFiles(files)
+
+    def onAddFolderButtonClicked(self):
+        folder = QFileDialog.getExistingDirectory(self, "Select folder", "")
+        if not folder:
+            return
+
+        self.treeWidget.addFolders(folder)
 
     def onRemoveButtonClicked(self):
         selectedFiles = self.treeWidget.selectedFiles()

@@ -38,6 +38,9 @@ class MyTreeWidget(QTreeWidget):
         return [os.path.normpath(item.text(0)) for item in self.selectedItems()]
 
     def addFiles(self, files):
+        if not isinstance(files, list):
+            files = [files]
+
         for file in files:
             file = os.path.normpath(file)
 
@@ -54,7 +57,13 @@ class MyTreeWidget(QTreeWidget):
 
                 self.filesChanged.emit()
 
+    def addFolders(self, folders):
+        return self.addFiles(folders)
+
     def removeFiles(self, files):
+        if not isinstance(files, list):
+            files = [files]
+
         for file in files:
             file = os.path.normpath(file)
             item = self._files.get(file) or self._folders.get(file)
@@ -67,3 +76,6 @@ class MyTreeWidget(QTreeWidget):
                 self._folders.pop(file, None)
 
                 self.filesChanged.emit()
+
+        def removeFolders(self, folders):
+            return self.removeFiles(folders)

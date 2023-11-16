@@ -61,7 +61,7 @@ class MainWidget(QMainWindow):
 
         initialDir = os.path.dirname(files[0])
         targetDir = QFileDialog.getExistingDirectory(self, "Select target directory for unpacking", initialDir)
-        if targetDir is None:
+        if not targetDir:
             return
 
         targetDir = os.path.normpath(targetDir)
@@ -79,9 +79,9 @@ class MainWidget(QMainWindow):
         if not folders:
             return
 
-        initialDir = folders[0]
+        initialDir = os.path.normpath(os.path.join(folders[0], "../"))
         targetDir = QFileDialog.getExistingDirectory(self, "Select target directory for re-packing", initialDir)
-        if targetDir is None:
+        if not targetDir:
             return
 
         targetDir = os.path.normpath(targetDir)
@@ -101,7 +101,7 @@ class MainWidget(QMainWindow):
 
         initialDir = os.path.dirname(files[0])
         targetDir = QFileDialog.getExistingDirectory(self, "Select target directory for saving", initialDir)
-        if targetDir is None:
+        if not targetDir:
             return
 
         targetDir = os.path.normpath(targetDir)

@@ -43,16 +43,24 @@ class LensCrawler:
     def _lens_info_to_lens(self, lens_info):
         uuid = lens_info.get('scannableUuid', '')
         return {
-            'unlockable_id': lens_info.get('lensId', ''), 'uuid': uuid,
+            'unlockable_id': lens_info.get('lensId', ''),
+            'uuid': uuid,
             'snapcode_url': f'https://app.snapchat.com/web/deeplink/snapcode?data={uuid}&version=1&type=png',
             'user_display_name': lens_info.get('lensCreatorDisplayName', ''),
-            'lens_name': lens_info.get('lensName', ''), 'lens_tags': '', 'lens_status': 'Live',
-            'deeplink': lens_info.get('unlockUrl', ''), 'icon_url': lens_info.get('iconUrl', ''),
+            'lens_name': lens_info.get('lensName', ''),
+            'lens_tags': '',
+            'lens_status': 'Live',
+            'deeplink': lens_info.get('unlockUrl', ''),
+            'icon_url': lens_info.get('iconUrl', ''),
             'thumbnail_media_url': lens_info.get('lensPreviewImageUrl', ''),
             'thumbnail_media_poster_url': lens_info.get('lensPreviewImageUrl', ''),
-            'standard_media_url': lens_info.get('lensPreviewVideoUrl', ''), 'standard_media_poster_url': '',
-            'obfuscated_user_slug': '', 'image_sequence': {}, 'lens_id': lens_info.get('lensId', ''),
+            'standard_media_url': lens_info.get('lensPreviewVideoUrl', ''),
+            'standard_media_poster_url': '',
+            'obfuscated_user_slug': '',
+            'image_sequence': {},
+            'lens_id': lens_info.get('lensId', ''),
             'lens_url': lens_info.get('lensResource', {}).get('archiveLink', ''),
-            'signature': lens_info.get('lensResource', {}).get('signature', ''), 'hint_id': '',
+            'signature': lens_info.get('lensResource', {}).get('signature', ''),
+            'hint_id': '',
             'additional_hint_ids': {}
         }

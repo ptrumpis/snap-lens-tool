@@ -25,6 +25,7 @@ class DownloadWidget(QDialog):
         self.search_button.clicked.connect(self.search_data)
 
         self.label_lens_name = QLabel()
+        self.label_lens_id = QLabel()
         self.label_thumbnail = QLabel()
         self.label_snapcode = QLabel()
 
@@ -35,6 +36,7 @@ class DownloadWidget(QDialog):
         self.layout.addWidget(self.url_input)
         self.layout.addWidget(self.search_button)
         self.layout.addWidget(self.label_lens_name)
+        self.layout.addWidget(self.label_lens_id)
         self.layout.addWidget(self.label_thumbnail)
         self.layout.addWidget(self.label_snapcode)
         self.layout.addWidget(self.download_button)
@@ -54,12 +56,16 @@ class DownloadWidget(QDialog):
                 self.log(f"Lens Meta {lens}")
 
                 lens_name = lens["lens_name"]
+                lens_id = lens["lens_id"]
                 thumbnail_url = lens["thumbnail_media_url"]
                 snapcode_url = lens["snapcode_url"]
                 archive_link = lens["lens_url"]
 
                 self.label_lens_name.setText(f"Lens Name: {lens_name}")
                 self.label_lens_name.setAlignment(Qt.AlignCenter)
+
+                self.label_lens_id.setText(f"Lens ID: {lens_id}")
+                self.label_lens_id.setAlignment(Qt.AlignCenter)
 
                 self.label_thumbnail.setPixmap(self.image_url_to_pixmap(thumbnail_url))
                 self.label_thumbnail.setAlignment(Qt.AlignCenter)

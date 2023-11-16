@@ -9,10 +9,11 @@ The code is based on the [Blender add-on for importing/exporting Snapchat lenses
 Special thanks to user **ghalta22** for finding the fallback patch.
 
 ## ⭐ Features
+- Select files or drag and drop them.
 - Unpack Snapchat lenses.
 - Re-Pack modified Snapchat lenses.
 - Disable Snap Camera fallback mode on lenses.
-- Download lenses from Snapchat
+- Download lenses from Snapchat.
 
 ![download](https://github.com/ptrumpis/snap-lens-tool/assets/116500225/3db4d46f-7d37-47bf-b4c5-8cba07687bad)
 

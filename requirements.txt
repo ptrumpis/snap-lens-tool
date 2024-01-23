@@ -1,5 +1,5 @@
 beautifulsoup4==4.12.3
-lxml==4.9.4
+lxml==5.1.0
 numpy==1.26.1
 pyqt5==5.15.9
 pyqt5-tools==5.15.9.3.3

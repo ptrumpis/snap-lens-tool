@@ -3,5 +3,5 @@ lxml==5.1.0
 numpy==1.26.1
 pyqt5==5.15.9
 pyqt5-tools==5.15.9.3.3
-requests==2.31.0
+requests==2.32.3
 zstandard==0.22.0
